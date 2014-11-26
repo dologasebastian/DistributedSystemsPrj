@@ -1,0 +1,14 @@
+C:\PDC\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\ResolveAssemblyReference.cache
+C:\PDC\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.Properties.Resources.resources
+C:\PDC\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.csproj.GenerateResource.Cache
+C:\PDC\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\bin\Debug\Microsoft.ServiceModel.Samples.XmlRpc.dll
+C:\PDC\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\bin\Debug\Microsoft.ServiceModel.Samples.XmlRpc.pdb
+C:\PDC\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.dll
+C:\PDC\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.pdb
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\bin\Debug\Microsoft.ServiceModel.Samples.XmlRpc.dll
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\bin\Debug\Microsoft.ServiceModel.Samples.XmlRpc.pdb
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\ResolveAssemblyReference.cache
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.Properties.Resources.resources
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.csproj.GenerateResource.Cache
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.dll
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.pdb

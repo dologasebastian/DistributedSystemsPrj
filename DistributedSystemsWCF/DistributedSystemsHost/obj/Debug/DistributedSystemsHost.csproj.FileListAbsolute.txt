@@ -1,0 +1,9 @@
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\TestApplication.exe.config
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\TestApplication.exe
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\TestApplication.pdb
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\TestApplication.exe
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\TestApplication.pdb
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\GettingStartedLib.dll
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\GettingStartedLib.pdb
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystemsHost.csprojResolveAssemblyReference.cache
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystemHost.exe.config

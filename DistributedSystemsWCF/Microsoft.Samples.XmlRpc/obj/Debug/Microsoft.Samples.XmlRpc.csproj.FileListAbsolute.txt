@@ -1,0 +1,14 @@
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\bin\Debug\Microsoft.ServiceModel.Samples.XmlRpc.dll
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\bin\Debug\Microsoft.ServiceModel.Samples.XmlRpc.pdb
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\ResolveAssemblyReference.cache
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.Properties.Resources.resources
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.Samples.XmlRpc.csproj.GenerateResource.Cache
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.dll
+C:\PDC2008\Microsoft.ServiceModel.Samples.XmlRpc\Microsoft.ServiceModel.XmlRpc\obj\Debug\Microsoft.ServiceModel.Samples.XmlRpc.pdb
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\Microsoft.Samples.XmlRpc\bin\Debug\Microsoft.Samples.XmlRpc.dll
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\Microsoft.Samples.XmlRpc\bin\Debug\Microsoft.Samples.XmlRpc.pdb
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\Microsoft.Samples.XmlRpc\obj\Debug\Microsoft.Samples.XmlRpc.csprojResolveAssemblyReference.cache
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\Microsoft.Samples.XmlRpc\obj\Debug\Microsoft.Samples.XmlRpc.Properties.Resources.resources
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\Microsoft.Samples.XmlRpc\obj\Debug\Microsoft.Samples.XmlRpc.csproj.GenerateResource.Cache
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\Microsoft.Samples.XmlRpc\obj\Debug\Microsoft.Samples.XmlRpc.dll
+C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\Microsoft.Samples.XmlRpc\obj\Debug\Microsoft.Samples.XmlRpc.pdb

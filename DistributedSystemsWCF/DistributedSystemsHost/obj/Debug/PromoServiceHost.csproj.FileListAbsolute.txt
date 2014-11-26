@@ -1,0 +1,8 @@
+C:\Users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\TestApplication.exe.config
+C:\Users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\obj\Debug\TestApplication.exe
+C:\Users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\obj\Debug\TestApplication.pdb
+C:\Users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\TestApplication.exe
+C:\Users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\TestApplication.pdb
+C:\Users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\GettingStartedLib.dll
+C:\Users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\GettingStartedLib.pdb
+C:\Users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\obj\Debug\PromoServiceHost.csprojResolveAssemblyReference.cache
