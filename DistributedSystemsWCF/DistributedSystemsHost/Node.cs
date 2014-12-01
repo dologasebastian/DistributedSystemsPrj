@@ -68,10 +68,11 @@ namespace DistributedSystems
             Console.WriteLine("IRPCOperations API endpoint listening at {0}", ListenUri);
         }
         /// <summary>
-        /// Stop this host
+        /// Stop this host. Send your IP to all other nodes so that they can remove you from the list.
         /// </summary>
         public void Stop()
         {
+            SignOff();
             RPCServiceHost.Close();
             Console.WriteLine("Node listening at {0} closed succesfully", ListenUri);
         }
@@ -97,6 +98,18 @@ namespace DistributedSystems
                 return true;
             }            
             return false;
+        }
+        /// <summary>
+        /// Send your IP to all other nodes so that they can remove you from the list.
+        /// </summary>
+        public void SignOff()
+        {
+            foreach (string ip in Network)
+            {
+                IRPCOperations API = ConnectTo(ip);
+                if (API != null)
+                    API.SignOff(Address);
+            }
         }
         /// <summary>
         /// Connects to a Node using a specific IP.

@@ -81,6 +81,10 @@ namespace DistributedSystems
                                     output += network + "  ";
                                 Console.WriteLine("Nodes connected: " + (!string.IsNullOrEmpty(output) ? output : "None"));
                                 break;
+                            case "-signoff":
+                                node.SignOff();
+                                Console.WriteLine("Signed off from the network.");
+                                break;
                             default:
                                 Console.WriteLine("Unknown command\n");
                                 break;
@@ -100,8 +104,10 @@ namespace DistributedSystems
             Console.WriteLine("                      Token Ring / Ricart & Agrawala.");
             Console.WriteLine("-start (int)          Start a distributed calculation.");
             Console.WriteLine("                      Specify initial value if desired.");
+            Console.WriteLine("-signoff              Sign off from the network.");
             Console.WriteLine("-show                 Show information related to this node.");
             Console.WriteLine("-quit                 Close the node and it's connections.");
+
         }
     }
 }

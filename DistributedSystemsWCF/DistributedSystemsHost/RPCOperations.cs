@@ -41,6 +41,12 @@ namespace DistributedSystems
         /// <returns></returns>
         [OperationContract]
         void PropagateState(int CurrentValue);
+        /// <summary>
+        /// Called by a node when it wants to leave the network.
+        /// </summary>
+        /// <param name="IP">Sends its IP so the other nodes know which one left.</param>
+        [OperationBehavior]
+        void SignOff(string IP);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
@@ -67,6 +73,11 @@ namespace DistributedSystems
         {
             Console.WriteLine("Receiving update " + CurrentValue);
             Node.Instance.DistrCalc.CurrentValue = CurrentValue;
+        }
+        public void SignOff(string IP)
+        {
+            if (Node.Instance.Network.Contains(IP))
+                Node.Instance.Network.Remove(IP);
         }
     }
 }
