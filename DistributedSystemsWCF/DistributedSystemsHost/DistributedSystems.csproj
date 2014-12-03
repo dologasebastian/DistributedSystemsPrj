@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="DistributedCalculation.cs" />
+    <Compile Include="LamportClock.cs" />
     <Compile Include="MutualExclusionAlgorithm.cs" />
     <Compile Include="RicartAgrawala.cs" />
     <Compile Include="RPCOperations.cs" />

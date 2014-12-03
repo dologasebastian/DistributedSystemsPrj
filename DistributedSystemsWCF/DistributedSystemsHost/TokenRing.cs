@@ -12,7 +12,7 @@ namespace DistributedSystems
         }
 
         // --- Public Methods --------------------------------------------        
-        public override void Acquire()
+        public override void Acquire(Tuple<long, string> receivedLC = null)
         {
             if (!HasToken)
             {

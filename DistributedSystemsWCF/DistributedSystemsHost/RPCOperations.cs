@@ -32,7 +32,14 @@ namespace DistributedSystems
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        void TakeToken();
+        void TakeToken(long? lcCounter = null, string lcIP = "");
+        /// <summary>
+        /// Informs all the other nodes that this nodes wants access to the resource (Used for Recard & Agrawala)
+        /// </summary>
+        /// <param name="receivedLC">Received Lamport clock state</param>
+        /// <returns></returns>
+        [OperationContract]
+        void RequestToken(long lcCounter, string lcIP);
         /// <summary>
         /// Propagate the state
         /// </summary>
@@ -45,7 +52,7 @@ namespace DistributedSystems
         /// Called by a node when it wants to leave the network.
         /// </summary>
         /// <param name="IP">Sends its IP so the other nodes know which one left.</param>
-        [OperationBehavior]
+        [OperationContract]
         void SignOff(string IP);
     }
 
@@ -64,10 +71,38 @@ namespace DistributedSystems
             Console.WriteLine("Starting distributed calculation with value: " + Value);
             Node.Instance.DistrCalc.Start(Value);
         }
-        public void TakeToken()
+        public void TakeToken(long? lcCounter = null, string lcIP = "")
         {
+            Tuple<long, string> receivedLC = null;
             Console.WriteLine("Acquiring Token...");
-            Node.Instance.DistrCalc.Acquire();
+
+            if (lcCounter != null && lcIP != "")
+            {
+                receivedLC = new Tuple<long, string>((long)lcCounter, lcIP.ToString());
+            }
+            Node.Instance.DistrCalc.Acquire(receivedLC);
+        }
+        // TODO: RPC shows some strange behavior when passing the arguments
+        public void RequestToken(long lcCounter, string lcIP)
+        {
+            Tuple<long, string> receivedLC = new Tuple<long, string>(lcCounter, lcIP);
+            try
+            {
+                DistributedCalculation algo = Node.Instance.DistrCalc;
+                if (algo.GetType() == typeof(RicartAgrawala))
+                {
+                    Console.WriteLine("Process received request...");
+                    ((RicartAgrawala)algo).ReceiveRequest(receivedLC);
+                }
+                else
+                {
+                    throw new Exception("RPCOperations: Method RequestToken is only available for Ricart & Agrawala algorithm.");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
         public void PropagateState(int CurrentValue)
         {

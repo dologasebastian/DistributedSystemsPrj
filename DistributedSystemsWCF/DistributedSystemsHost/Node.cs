@@ -91,6 +91,7 @@ namespace DistributedSystems
                     Network.AddRange(nodes);
                 // Nodes should have an ordering in the ring
                 // They are ordered by their IP addresses
+                // TODO: Shouldn't it be "Network = Network.Order....ToList();"?
                 Network.OrderBy(x => int.Parse(x.Split('.').First()))
                     .ThenBy(x => int.Parse(x.Split('.')[1]))
                     .ThenBy(x => int.Parse(x.Split('.')[2]))

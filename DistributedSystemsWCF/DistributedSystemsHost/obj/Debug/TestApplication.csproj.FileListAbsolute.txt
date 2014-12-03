@@ -1,8 +1,0 @@
-c:\users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\TestApplication.exe.config
-c:\users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\TestApplication.exe
-c:\users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\TestApplication.pdb
-c:\users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\GettingStartedLib.dll
-c:\users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\bin\Debug\GettingStartedLib.pdb
-c:\users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\obj\Debug\TestApplication.csprojResolveAssemblyReference.cache
-c:\users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\obj\Debug\TestApplication.exe
-c:\users\sebastian\documents\visual studio 2012\Projects\GettingStartedWCF\TestApplication\obj\Debug\TestApplication.pdb

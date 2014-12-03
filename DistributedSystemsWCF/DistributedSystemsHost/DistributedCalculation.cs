@@ -23,7 +23,7 @@ namespace DistributedSystems
         protected Semaphore Pool = new Semaphore(0, 1);
 
         // --- Public Properties ----------------------------------------------
-        public int CurrentValue { get; set; }                           // The current value known by this Node that is calculated and passed through the network
+        public int CurrentValue { get; set; }   // The current value known by this Node that is calculated and passed through the network
         public bool NeedsToAccessCriticalSection {get;set;}
         //{ 
         //    get { lock (ThisLock) { return this.NeedsToAccessCriticalSection; } }
@@ -42,7 +42,7 @@ namespace DistributedSystems
         // --- Public Abstract Methods ---------------------------------------
         public abstract void Run(int Value);
         public abstract void Done();
-        public abstract void Acquire();
+        public abstract void Acquire(Tuple<long, string> receivedLC = null);
         public abstract void Release();
         public void Start(int? StartValue = null)
         {
@@ -50,7 +50,7 @@ namespace DistributedSystems
                 CurrentValue = (int)StartValue;
 
             if (StartValue == null) StartValue = (int)(random.NextDouble() * 100);
-            if (StartTime != null) return;
+            if (StartTime != DateTime.MinValue) return;
             StartTime = DateTime.Now;
             Thread thread = new Thread(() => Run((int)StartValue));
             thread.Start();

@@ -56,7 +56,7 @@ namespace DistributedSystems
                                     node.Join(splits[1]);
                                 }
                                 break;
-                            case "-alg ":
+                            case "-alg":
                                 if (splits.Count() != 2)
                                 {
                                     System.Console.WriteLine("Please specify what algorithms you wish to use\n");
