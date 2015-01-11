@@ -103,23 +103,24 @@ namespace DistributedSystems
         public int raRequest(long lcCounter, string lcIP)
         {
             Tuple<long, string> receivedLC = new Tuple<long, string>(lcCounter, lcIP);
-            //try
-            //{
+            try
+            {
                 DistributedCalculation algo = Node.Instance.DistrCalc;
-                //if (algo.GetType() == typeof(RicartAgrawala))
-                //{
+                if (algo.GetType() == typeof(RicartAgrawala))
+                {
                     Console.WriteLine("Process received request...");
                     ((RicartAgrawala)algo).ReceiveRequest(receivedLC);
-                //}
-                //else
-                //{
-                //    throw new Exception("RPCOperations: Method RequestToken is only available for Ricart & Agrawala algorithm.");
-                //}
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.ToString());
-            //}
+                }
+                else
+                {
+                    throw new Exception("RPCOperations: Method RequestToken is only available for Ricart & Agrawala algorithm.");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return 1;
+            }
 
             return 0;
         }
