@@ -88,7 +88,7 @@ namespace DistributedSystems
                 {
                     IRPCOperations API = Node.Instance.ConnectTo(ip);
                     if (API != null)
-                        API.PropagateState(CurrentValue);
+                        API.propagate_state(CurrentValue);
                     else
                         Console.WriteLine("Method: PropagateState(). Problem trying to get the API for the client: " + ip);
 

@@ -19,20 +19,20 @@ namespace DistributedSystems
         /// <param name="ip"></param>
         /// <returns></returns>
         [OperationContract]
-        string[] Join(string IP);
+        string[] join(string IP);
         /// <summary>
         /// Starts the calculation in this specific Node with the passed value.
         /// </summary>
         /// <param name="val">The value to start/continue the computation</param>
         /// <returns></returns>
         [OperationContract]
-        int StartCalculation(int Value);
+        int start_calculation(int Value);
         /// <summary>
         /// Informs the node that it has the token
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        int TakeToken();
+        int take_token();
         /// <summary>
         /// Sends ok reply
         /// </summary>
@@ -53,19 +53,19 @@ namespace DistributedSystems
         /// <param name="Value"></param>
         /// <returns></returns>
         [OperationContract]
-        int PropagateState(int CurrentValue);
+        int propagate_state(int CurrentValue);
         /// <summary>
         /// Called by a node when it wants to leave the network.
         /// </summary>
         /// <param name="IP">Sends its IP so the other nodes know which one left.</param>
         [OperationContract]
-        int SignOff(string IP);
+        int sign_off(string IP);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class RPCOperations : IRPCOperations
     {
-        public string[] Join(string IP)
+        public string[] join(string IP)
         {
             List<string> Network = new List<string>(Node.Instance.Network);
             Node.Instance.Network.Add(IP); // Add requesting node to this network
@@ -73,14 +73,14 @@ namespace DistributedSystems
             // return an Array of all connected IPs to this Node, except the one that called Join.
             return Network.ToArray();
         }
-        public int StartCalculation(int Value)
+        public int start_calculation(int Value)
         {
             Console.WriteLine("Starting distributed calculation with value: " + Value);
             Node.Instance.DistrCalc.Start(Value);
             
             return 0;
         }
-        public int TakeToken()
+        public int take_token()
         {
             Console.WriteLine("Acquiring Token...");
 
@@ -123,14 +123,14 @@ namespace DistributedSystems
 
             return 0;
         }
-        public int PropagateState(int CurrentValue)
+        public int propagate_state(int CurrentValue)
         {
             Console.WriteLine("Receiving update " + CurrentValue);
             Node.Instance.DistrCalc.CurrentValue = CurrentValue;
 
             return 0;
         }
-        public int SignOff(string IP)
+        public int sign_off(string IP)
         {
             if (Node.Instance.Network.Contains(IP))
             {

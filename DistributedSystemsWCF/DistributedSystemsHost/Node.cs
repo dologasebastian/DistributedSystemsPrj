@@ -99,7 +99,7 @@ namespace DistributedSystems
                 IRPCOperations API = ConnectTo(IP);
                 if (API != null) // if succesful connection Join the entire network
                 {
-                    string[] nodes = API.Join(Address);
+                    string[] nodes = API.join(Address);
                     if (nodes != null && nodes.Count() > 0)
                         Network.AddRange(nodes);
                     // Nodes should have an ordering in the ring
@@ -137,7 +137,7 @@ namespace DistributedSystems
                 {
                     IRPCOperations API = ConnectTo(ip);
                     if (API != null)
-                        API.SignOff(Address);
+                        API.sign_off(Address);
                 }
 
                 Network.Clear();
@@ -238,7 +238,7 @@ namespace DistributedSystems
                 // And they will all block until they receive the token to perform an operation
                 IRPCOperations API = ConnectTo(ip);
                 if (API != null)
-                    API.StartCalculation(StartingValue);
+                    API.start_calculation(StartingValue);
                 else
                     Console.WriteLine("Method: StartCalculation(). Problem trying to get the API for the client: " + ip);
             }

@@ -188,7 +188,7 @@ namespace DistributedSystems
             else
             {
                 Tuple<long, string> tempLcState = (lcState != null) ? lcState : LC.EventSend();
-                Console.WriteLine("Acquiring Token from self...");
+                Console.WriteLine("Receiving OK reply from self...");
 
                 Node.Instance.DistrCalc.Acquire(tempLcState);
             }
