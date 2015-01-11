@@ -21,15 +21,17 @@ namespace DistributedSystems
     public class Node
     {
         // --- Private Properties ----------------------------------------
-        private ServiceHost RPCServiceHost = null;                  // The host class
-        private Uri ListenUri = null;                               // The URI where the server listens to incoming connetions
+        private ServiceHost RPCServiceHost = null;                    // The host class
+        private Uri ListenUri = null;                                 // The URI where the server listens to incoming connetions
+        private ChannelFactory<IRPCOperations> ChannelFactory = null; // The API/Connection to another Node. Needed in order to open/close connections
+        private IRPCOperations ChannelAPI = null;                     // The API for the client
 
         // --- Public Properties -----------------------------------------
-        public static Node Instance = null;                         // Singleton Class
-        public static int Port = 3105;                              // All nodes use the same port.
-        public List<string> Network { get; set; }                   // List of addresses of all connected Nodes (including this one)
-        public string Address { get; set; }                         // The address of the current Node.
-        public DistributedCalculation DistrCalc { get; set; }       // Class that does the distributed calculation
+        public static Node Instance = null;                           // Singleton Class
+        public static int Port = 3105;                                // All nodes use the same port.
+        public List<string> Network { get; set; }                     // List of addresses of all connected Nodes (including this one)
+        public string Address { get; set; }                           // The address of the current Node.
+        public DistributedCalculation DistrCalc { get; set; }         // Class that does the distributed calculation
 
         // --- Constructor -----------------------------------------------
         public Node(string IP)
@@ -44,8 +46,17 @@ namespace DistributedSystems
                 // Create the server with the desired IP and Port.
                 //Uri baseAddress = new UriBuilder(Uri.UriSchemeHttp, Environment.MachineName, Port, "/").Uri;
                 Uri baseAddress = new UriBuilder(Uri.UriSchemeHttp, IP, Port, "/").Uri;
+                // create a new ServiceHost. Pass the interface / class that will be used to communicate with other nodes.
                 RPCServiceHost = new ServiceHost(typeof(RPCOperations));
-                var epXmlRpc = RPCServiceHost.AddServiceEndpoint(typeof(IRPCOperations), new WebHttpBinding(WebHttpSecurityMode.None), new Uri(baseAddress.AbsoluteUri));
+                /* All communication with a Windows Communication Foundation (WCF) service occurs through the endpoints 
+                   of the service. Endpoints provide clients access to the functionality offered by a WCF service.
+                   Each endpoint consists of four properties:
+                    - An address that indicates where the endpoint can be found.
+                    - A binding that specifies how a client can communicate with the endpoint. This includes the transport protocol (TCP, HTTP)
+                    - A contract that identifies the operations available.
+                    - A set of behaviors that specify local implementation details of the endpoint
+                */
+                var epXmlRpc = RPCServiceHost.AddServiceEndpoint(typeof(IRPCOperations), new WebHttpBinding(WebHttpSecurityMode.None), baseAddress);
                 epXmlRpc.Behaviors.Add(new XmlRpcEndpointBehavior());
                 ListenUri = epXmlRpc.ListenUri;
                 Console.WriteLine("Initialized Node succesfully.");
@@ -82,34 +93,61 @@ namespace DistributedSystems
         /// <param name="IP">the IP used to find the Node. Port is assumed identical</param>
         /// <returns></returns>
         public bool Join(string IP)
-        {            
-            IRPCOperations API = ConnectTo(IP);
-            if (API != null) // if succesful connection Join the entire network
+        {
+            try
             {
-                string[] nodes = API.Join(Address);
-                if (nodes != null && nodes.Count() > 0)
-                    Network.AddRange(nodes);
-                // Nodes should have an ordering in the ring
-                // They are ordered by their IP addresses
-                // TODO: Shouldn't it be "Network = Network.Order....ToList();"?
-                Network.OrderBy(x => int.Parse(x.Split('.').First()))
-                    .ThenBy(x => int.Parse(x.Split('.')[1]))
-                    .ThenBy(x => int.Parse(x.Split('.')[2]))
-                    .ThenBy(x => int.Parse(x.Split('.').Last())).ToList();
-                return true;
-            }            
-            return false;
+                IRPCOperations API = ConnectTo(IP);
+                if (API != null) // if succesful connection Join the entire network
+                {
+                    string[] nodes = API.Join(Address);
+                    if (nodes != null && nodes.Count() > 0)
+                        Network.AddRange(nodes);
+                    // Nodes should have an ordering in the ring
+                    // They are ordered by their IP addresses
+                    // TODO: Shouldn't it be "Network = Network.Order....ToList();"?
+                    Network.OrderBy(x => int.Parse(x.Split('.').First()))
+                        .ThenBy(x => int.Parse(x.Split('.')[1]))
+                        .ThenBy(x => int.Parse(x.Split('.')[2]))
+                        .ThenBy(x => int.Parse(x.Split('.').Last())).ToList();
+                    if (System.Diagnostics.Debugger.IsAttached) Console.WriteLine("Joined network successfully");
+                    return true;
+                }
+                if (System.Diagnostics.Debugger.IsAttached) Console.WriteLine("A non-fatal problem occured while trying to join.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("A fatal problem occured while trying to join.");
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    Console.WriteLine("-------------------------------------------------");
+                    Console.WriteLine(ex.StackTrace);
+                }
+                return false;
+            }
         }
         /// <summary>
         /// Send your IP to all other nodes so that they can remove you from the list.
         /// </summary>
         public void SignOff()
         {
-            foreach (string ip in Network)
+            try
             {
-                IRPCOperations API = ConnectTo(ip);
-                if (API != null)
-                    API.SignOff(Address);
+                foreach (string ip in Network.Where(x => x != Address))
+                {
+                    IRPCOperations API = ConnectTo(ip);
+                    if (API != null)
+                        API.SignOff(Address);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("A fatal problem occured while trying to signoff.");
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    Console.WriteLine("-------------------------------------------------");
+                    Console.WriteLine(ex.StackTrace);
+                }
             }
         }
         /// <summary>
@@ -120,18 +158,42 @@ namespace DistributedSystems
         /// <returns>True if connection could be made, False if not.</returns>
         public IRPCOperations ConnectTo(string IP)
         {
-            Uri NodeAddress = new UriBuilder(Uri.UriSchemeHttp, IP, Port, "/").Uri;
-
-            ChannelFactory<IRPCOperations> ChannelFactory = new ChannelFactory<IRPCOperations>(
-                new WebHttpBinding(WebHttpSecurityMode.None), new EndpointAddress(NodeAddress));
-            ChannelFactory.Endpoint.Behaviors.Add(new XmlRpcEndpointBehavior());
-            // check if channel was created succesfully
-            if ((ChannelFactory != null) || (ChannelFactory.State != CommunicationState.Faulted))
+            try
             {
-                return ChannelFactory.CreateChannel();
+                Uri NodeAddress = new UriBuilder(Uri.UriSchemeHttp, IP, Port, "/").Uri;
+
+                // close the last connection before creating a new one
+                if (ChannelAPI != null && ChannelFactory != null && ChannelFactory.State == CommunicationState.Opened)
+                {
+                    // if connecting to same Node, skip the next steps
+                    if (ChannelFactory.Endpoint.Address.Uri.AbsoluteUri == NodeAddress.AbsoluteUri)
+                        return ChannelAPI;  // send the last API
+                    ChannelFactory.Close();
+                }
+
+                ChannelFactory = new ChannelFactory<IRPCOperations>(
+                    new WebHttpBinding(WebHttpSecurityMode.None), new EndpointAddress(NodeAddress));
+                ChannelFactory.Endpoint.Behaviors.Add(new XmlRpcEndpointBehavior());
+                // check if channel was created succesfully
+                if ((ChannelFactory != null) || (ChannelFactory.State != CommunicationState.Faulted))
+                {
+                    ChannelAPI = ChannelFactory.CreateChannel();    // create new API
+                    ChannelFactory.Open();
+                    return ChannelAPI;
+                }
+                Console.WriteLine("Could not ConnectTo: " + IP + " Might crash.");
+                return null;
             }
-            Console.WriteLine("Could not ConnectTo: " + IP + " Might crash.");
-            return null;
+            catch (Exception ex)
+            {
+                Console.WriteLine("A fatal problem occured while trying to connect to Node: " + IP);
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    Console.WriteLine("-------------------------------------------------");
+                    Console.WriteLine(ex.StackTrace);
+                }
+                return null;
+            }
         }
         /// <summary>
         /// Select the desired Algorithm.
@@ -140,9 +202,15 @@ namespace DistributedSystems
         public void SelectAlgorithm(string Alg)
         {
             if (Alg == "-tk")
+            {
                 DistrCalc = new TokenRing();
+                Console.WriteLine("Using TokenRing.");
+            }
             else if (Alg == "-ra")
+            {
                 DistrCalc = new RicartAgrawala();
+                Console.WriteLine("Using RicartAgrawala.");
+            }
             else
             {
                 Console.WriteLine("Unkown algorithm. Using TokenRing by default");
@@ -159,8 +227,8 @@ namespace DistributedSystems
 
             // Inform other nodes that we are about to start the calculation
             Console.WriteLine("Telling other nodes to prepare for a distributed calculation.");
-            // StartCalculation for each connected Node. 
-            foreach (string ip in Network)
+            // StartCalculation for each connected Node.
+            foreach (string ip in Network.Where(x => x != Address))
             {
                 // On receiving this message each node will initialize a DC object with initial value
                 // And they will all block until they receive the token to perform an operation
@@ -171,6 +239,7 @@ namespace DistributedSystems
                     Console.WriteLine("Method: StartCalculation(). Problem trying to get the API for the client: " + ip);
             }
             // This is the only node with the token
+            Console.WriteLine("Starting calculation...");
             DistrCalc.Start();
         }
     }

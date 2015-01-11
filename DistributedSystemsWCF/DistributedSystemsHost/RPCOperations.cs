@@ -63,6 +63,7 @@ namespace DistributedSystems
         {
             List<string> Network = new List<string>(Node.Instance.Network);
             Node.Instance.Network.Add(IP); // Add requesting node to this network
+            Console.WriteLine(IP + " joined the network.");
             // return an Array of all connected IPs to this Node, except the one that called Join.
             return Network.ToArray();
         }
@@ -112,7 +113,15 @@ namespace DistributedSystems
         public void SignOff(string IP)
         {
             if (Node.Instance.Network.Contains(IP))
+            {
                 Node.Instance.Network.Remove(IP);
+                Console.WriteLine("Node " + IP + " has signed off.");
+            }
+            else
+            {
+                Console.WriteLine("Node " + IP + " signed off, but it was not registered by this node. This should not have happened.");
+                Console.WriteLine("Continuing normal execution...");
+            }
         }
     }
 }
