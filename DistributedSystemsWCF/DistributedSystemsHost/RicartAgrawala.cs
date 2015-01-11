@@ -160,7 +160,7 @@ namespace DistributedSystems
                 if (API != null)
                 {
                     Tuple<long, string> lcState = LC.EventSend();
-                    API.raRequest(lcState.Item1, lcState.Item2);
+                    API.raRequest(lcState.Item2, lcState.Item1);
                 }
                 else
                 {
@@ -178,7 +178,7 @@ namespace DistributedSystems
                 {
                     Tuple<long, string> tempLcState = (lcState != null) ? lcState : LC.EventSend();
 
-                    API.raReply(tempLcState.Item1, tempLcState.Item2);
+                    API.raReply(tempLcState.Item2, tempLcState.Item1);
                 }
                 else
                 {
