@@ -92,6 +92,7 @@ namespace DistributedSystems
         {
             Console.WriteLine("DONE!!!");
             HasToken = false;
+            Console.WriteLine("Final result: " + CurrentValue);
         }
     }
 }

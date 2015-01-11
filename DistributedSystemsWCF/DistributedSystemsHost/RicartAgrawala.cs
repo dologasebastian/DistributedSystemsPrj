@@ -76,7 +76,7 @@ namespace DistributedSystems
 
             // Check if all nodes in the network have already replied with OK
             // TODO: This can lead to deadlock if a new node joins the network!!!
-            allReplied = network.AsParallel().Any(x => ReceivedOKReplies.Contains(x));
+            allReplied = network.AsParallel().All(x => ReceivedOKReplies.Contains(x));
 
             // If yes, allow access
             if (allReplied)
@@ -140,6 +140,7 @@ namespace DistributedSystems
         public override void Done()
         {
             Console.WriteLine("Done!");
+            Console.WriteLine("Final result: " + CurrentValue);
         }
 
         // --- Private Methods -------------------------------------------------
@@ -159,7 +160,7 @@ namespace DistributedSystems
                 if (API != null)
                 {
                     Tuple<long, string> lcState = LC.EventSend();
-                    API.RequestToken(lcState.Item1, lcState.Item2);
+                    API.raRequest(lcState.Item1, lcState.Item2);
                 }
                 else
                 {
@@ -177,7 +178,7 @@ namespace DistributedSystems
                 {
                     Tuple<long, string> tempLcState = (lcState != null) ? lcState : LC.EventSend();
 
-                    API.TakeToken(tempLcState.Item1, tempLcState.Item2);
+                    API.raReply(tempLcState.Item1, tempLcState.Item2);
                 }
                 else
                 {

@@ -32,14 +32,20 @@ namespace DistributedSystems
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        int TakeToken(long lcCounter = -1, string lcIP = "");
+        int TakeToken();
+        /// <summary>
+        /// Sends ok reply
+        /// </summary>
+        /// <returns></returns>
+        [OperationContract]
+        int raReply(long lcCounter, string lcIP);
         /// <summary>
         /// Informs all the other nodes that this nodes wants access to the resource (Used for Recard & Agrawala)
         /// </summary>
         /// <param name="receivedLC">Received Lamport clock state</param>
         /// <returns></returns>
         [OperationContract]
-        int RequestToken(long lcCounter, string lcIP);
+        int raRequest(long lcCounter, string lcIP);
         /// <summary>
         /// Propagate the state
         /// </summary>
@@ -74,21 +80,27 @@ namespace DistributedSystems
             
             return 0;
         }
-        public int TakeToken(long lcCounter = -1, string lcIP = "")
+        public int TakeToken()
         {
-            Tuple<long, string> receivedLC = null;
             Console.WriteLine("Acquiring Token...");
 
-            if (lcCounter >= 0 && lcIP != "")
-            {
-                receivedLC = new Tuple<long, string>((long)lcCounter, lcIP.ToString());
-            }
+            Node.Instance.DistrCalc.Acquire();
+
+            return 0;
+        }
+        public int raReply(long lcCounter, string lcIP)
+        {
+            Tuple<long, string> receivedLC;
+            Console.WriteLine("Reciving OK reply...");
+
+            receivedLC = new Tuple<long, string>((long)lcCounter, lcIP.ToString());
+
             Node.Instance.DistrCalc.Acquire(receivedLC);
             
             return 0;
         }
         // TODO: RPC shows some strange behavior when passing the arguments
-        public int RequestToken(long lcCounter, string lcIP)
+        public int raRequest(long lcCounter, string lcIP)
         {
             Tuple<long, string> receivedLC = new Tuple<long, string>(lcCounter, lcIP);
             //try
