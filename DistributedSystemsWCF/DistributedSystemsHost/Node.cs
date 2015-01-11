@@ -169,6 +169,7 @@ namespace DistributedSystems
                     if (ChannelFactory.Endpoint.Address.Uri.AbsoluteUri == NodeAddress.AbsoluteUri)
                         return ChannelAPI;  // send the last API
                     ChannelFactory.Close();
+                    ChannelAPI = null;
                 }
 
                 ChannelFactory = new ChannelFactory<IRPCOperations>(
@@ -178,7 +179,7 @@ namespace DistributedSystems
                 if ((ChannelFactory != null) || (ChannelFactory.State != CommunicationState.Faulted))
                 {
                     ChannelAPI = ChannelFactory.CreateChannel();    // create new API
-                    ChannelFactory.Open();
+                    //ChannelFactory.Open();
                     return ChannelAPI;
                 }
                 Console.WriteLine("Could not ConnectTo: " + IP + " Might crash.");
