@@ -18,12 +18,12 @@ namespace DistributedSystems
             {
                 HasToken = true;
                 if (NeedsToAccessCriticalSection)
-                {
                     Pool.Release();
-                }
-                else
-                    Release();
+                //else
+                 //   Release();
             }
+            else
+                Console.WriteLine("Should not reach this line of code.");
         }
         public override void Release()
         {
@@ -58,22 +58,19 @@ namespace DistributedSystems
             while (!((DateTime.Now - StartTime).TotalSeconds > 3.0)) // predefined period of 3 seconds
             {
                 Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
-                //lock (ThisLock)
-                //{
-                    if (!this.HasToken)
-                    {
-                        NeedsToAccessCriticalSection = true;
-                        Pool.WaitOne();
-                    }
-                    // We have the token, enter critical section
-                    MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
-                    int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
-                    Update(op, arg);
-                    PropagateState();
-                    // Done with critical section, release token
-                    Release();
-                    NeedsToAccessCriticalSection = false;
-                //}
+
+                if (!HasToken)
+                {
+                    NeedsToAccessCriticalSection = true;
+                    Pool.WaitOne();
+                }
+                // We have the token, enter critical section
+                Update((MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length)),
+                    (int)(random.NextDouble() * 100) + 1);
+                PropagateState();
+                // Done with critical section, release token
+                NeedsToAccessCriticalSection = false;
+                Release();                
 
                 try
                 {
