@@ -1,24 +1,8 @@
-C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe.config
-C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.csprojResolveAssemblyReference.cache
-C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe
-C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.pdb
-C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\Microsoft.Samples.XmlRpc.dll
-C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\Microsoft.Samples.XmlRpc.pdb
-C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.exe
-C:\Users\sebastian\Documents\Visual Studio 2012\Projects\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.pdb
-C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe.config
-C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.exe
-C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.pdb
-C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe
-C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.pdb
-C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\Microsoft.Samples.XmlRpc.dll
-C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\Microsoft.Samples.XmlRpc.pdb
-C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.csprojResolveAssemblyReference.cache
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe.config
-D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.exe
-D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.pdb
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.pdb
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\Microsoft.Samples.XmlRpc.dll
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\Microsoft.Samples.XmlRpc.pdb
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.csprojResolveAssemblyReference.cache
+D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.exe
+D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.pdb

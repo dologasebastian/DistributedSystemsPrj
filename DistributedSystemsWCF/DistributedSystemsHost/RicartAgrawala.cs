@@ -102,7 +102,7 @@ namespace DistributedSystems
         public override void Run(int Value)
         {
             CurrentValue = Value;
-            while (!((DateTime.Now - StartTime).TotalSeconds > 3000)) // predefined period of 3 seconds
+            while (!((DateTime.Now - StartTime).TotalSeconds > 3.0)) // predefined period of 3 seconds
             {
                 //lock (ThisLock)
                 //{
@@ -170,16 +170,26 @@ namespace DistributedSystems
 
         private void SendOKReply(string ip, Tuple<long, string> lcState = null)
         {
-            IRPCOperations API = Node.Instance.ConnectTo(ip);
-            if (API != null)
+            if (ip != Node.Instance.Address)
             {
-                Tuple<long, string> tempLcState = lcState == null ? lcState : LC.EventSend();
-                
-                API.TakeToken(tempLcState.Item1, tempLcState.Item2);
+                IRPCOperations API = Node.Instance.ConnectTo(ip);
+                if (API != null)
+                {
+                    Tuple<long, string> tempLcState = (lcState != null) ? lcState : LC.EventSend();
+
+                    API.TakeToken(tempLcState.Item1, tempLcState.Item2);
+                }
+                else
+                {
+                    Console.WriteLine("Method: SendOKReply(). Problem trying to get the API");
+                }
             }
             else
             {
-                Console.WriteLine("Method: SendOKReply(). Problem trying to get the API");
+                Tuple<long, string> tempLcState = (lcState != null) ? lcState : LC.EventSend();
+                Console.WriteLine("Acquiring Token from self...");
+
+                Node.Instance.DistrCalc.Acquire(tempLcState);
             }
         }
 

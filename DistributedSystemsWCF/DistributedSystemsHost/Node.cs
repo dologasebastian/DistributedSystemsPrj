@@ -139,6 +139,9 @@ namespace DistributedSystems
                     if (API != null)
                         API.SignOff(Address);
                 }
+
+                Network.Clear();
+                Network.Add(Address);
             }
             catch (Exception ex)
             {

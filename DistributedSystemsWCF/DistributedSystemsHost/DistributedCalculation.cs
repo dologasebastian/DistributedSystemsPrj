@@ -50,7 +50,7 @@ namespace DistributedSystems
                 CurrentValue = (int)StartValue;
 
             if (StartValue == null) StartValue = (int)(random.NextDouble() * 100);
-            if (StartTime != DateTime.MinValue) return;
+            //if (StartTime != DateTime.MinValue) return;
             StartTime = DateTime.Now;
             Thread thread = new Thread(() => Run((int)StartValue));
             thread.Start();
@@ -81,7 +81,7 @@ namespace DistributedSystems
         }
         protected void PropagateState()
         {
-            Console.WriteLine("Sending current value to network");
+            Console.WriteLine("Sending current value (" + CurrentValue + ") to network");
             foreach (string ip in Node.Instance.Network)
             {
                 if (!ip.Equals(Node.Instance.Address))

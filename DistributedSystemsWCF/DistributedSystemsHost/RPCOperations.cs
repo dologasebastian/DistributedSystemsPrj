@@ -26,20 +26,20 @@ namespace DistributedSystems
         /// <param name="val">The value to start/continue the computation</param>
         /// <returns></returns>
         [OperationContract]
-        void StartCalculation(int Value);
+        int StartCalculation(int Value);
         /// <summary>
         /// Informs the node that it has the token
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        void TakeToken(long? lcCounter = null, string lcIP = "");
+        int TakeToken(long lcCounter = -1, string lcIP = "");
         /// <summary>
         /// Informs all the other nodes that this nodes wants access to the resource (Used for Recard & Agrawala)
         /// </summary>
         /// <param name="receivedLC">Received Lamport clock state</param>
         /// <returns></returns>
         [OperationContract]
-        void RequestToken(long lcCounter, string lcIP);
+        int RequestToken(long lcCounter, string lcIP);
         /// <summary>
         /// Propagate the state
         /// </summary>
@@ -47,13 +47,13 @@ namespace DistributedSystems
         /// <param name="Value"></param>
         /// <returns></returns>
         [OperationContract]
-        void PropagateState(int CurrentValue);
+        int PropagateState(int CurrentValue);
         /// <summary>
         /// Called by a node when it wants to leave the network.
         /// </summary>
         /// <param name="IP">Sends its IP so the other nodes know which one left.</param>
         [OperationContract]
-        void SignOff(string IP);
+        int SignOff(string IP);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
@@ -67,60 +67,70 @@ namespace DistributedSystems
             // return an Array of all connected IPs to this Node, except the one that called Join.
             return Network.ToArray();
         }
-        public void StartCalculation(int Value)
+        public int StartCalculation(int Value)
         {
             Console.WriteLine("Starting distributed calculation with value: " + Value);
             Node.Instance.DistrCalc.Start(Value);
+            
+            return 0;
         }
-        public void TakeToken(long? lcCounter = null, string lcIP = "")
+        public int TakeToken(long lcCounter = -1, string lcIP = "")
         {
             Tuple<long, string> receivedLC = null;
             Console.WriteLine("Acquiring Token...");
 
-            if (lcCounter != null && lcIP != "")
+            if (lcCounter >= 0 && lcIP != "")
             {
                 receivedLC = new Tuple<long, string>((long)lcCounter, lcIP.ToString());
             }
             Node.Instance.DistrCalc.Acquire(receivedLC);
+            
+            return 0;
         }
         // TODO: RPC shows some strange behavior when passing the arguments
-        public void RequestToken(long lcCounter, string lcIP)
+        public int RequestToken(long lcCounter, string lcIP)
         {
             Tuple<long, string> receivedLC = new Tuple<long, string>(lcCounter, lcIP);
-            try
-            {
+            //try
+            //{
                 DistributedCalculation algo = Node.Instance.DistrCalc;
-                if (algo.GetType() == typeof(RicartAgrawala))
-                {
+                //if (algo.GetType() == typeof(RicartAgrawala))
+                //{
                     Console.WriteLine("Process received request...");
                     ((RicartAgrawala)algo).ReceiveRequest(receivedLC);
-                }
-                else
-                {
-                    throw new Exception("RPCOperations: Method RequestToken is only available for Ricart & Agrawala algorithm.");
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+                //}
+                //else
+                //{
+                //    throw new Exception("RPCOperations: Method RequestToken is only available for Ricart & Agrawala algorithm.");
+                //}
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.ToString());
+            //}
+
+            return 0;
         }
-        public void PropagateState(int CurrentValue)
+        public int PropagateState(int CurrentValue)
         {
             Console.WriteLine("Receiving update " + CurrentValue);
             Node.Instance.DistrCalc.CurrentValue = CurrentValue;
+
+            return 0;
         }
-        public void SignOff(string IP)
+        public int SignOff(string IP)
         {
             if (Node.Instance.Network.Contains(IP))
             {
                 Node.Instance.Network.Remove(IP);
                 Console.WriteLine("Node " + IP + " has signed off.");
+                return 0;
             }
             else
             {
                 Console.WriteLine("Node " + IP + " signed off, but it was not registered by this node. This should not have happened.");
                 Console.WriteLine("Continuing normal execution...");
+                return 1;
             }
         }
     }
