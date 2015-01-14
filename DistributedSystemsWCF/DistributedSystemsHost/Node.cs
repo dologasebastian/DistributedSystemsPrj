@@ -44,8 +44,9 @@ namespace DistributedSystems
                 DistrCalc = new TokenRing();
 
                 // Create the server with the desired IP and Port.
-                //Uri baseAddress = new UriBuilder(Uri.UriSchemeHttp, Environment.MachineName, Port, "/").Uri;
-                Uri baseAddress = new UriBuilder(Uri.UriSchemeHttp, IP, Port, "/").Uri;
+                Uri baseAddress = new UriBuilder(Uri.UriSchemeHttp, System.Net.Dns.GetHostName(), Port, "/").Uri;
+                //Uri baseAddress = new Uri(string.Format("net.tcp://{0}:{1}/", IP == "127.0.0.1" ? "127.0.0.1" : System.Net.Dns.GetHostName(), Port));
+
                 // create a new ServiceHost. Pass the interface / class that will be used to communicate with other nodes.
                 RPCServiceHost = new ServiceHost(typeof(RPCOperations));
                 /* All communication with a Windows Communication Foundation (WCF) service occurs through the endpoints 
@@ -56,6 +57,8 @@ namespace DistributedSystems
                     - A contract that identifies the operations available.
                     - A set of behaviors that specify local implementation details of the endpoint
                 */
+                
+                //var epXmlRpc = RPCServiceHost.AddServiceEndpoint(typeof(IRPCOperations), new NetTcpBinding(SecurityMode.None), baseAddress);
                 var epXmlRpc = RPCServiceHost.AddServiceEndpoint(typeof(IRPCOperations), new WebHttpBinding(WebHttpSecurityMode.None), baseAddress);
                 epXmlRpc.Behaviors.Add(new XmlRpcEndpointBehavior());
                 ListenUri = epXmlRpc.ListenUri;
@@ -76,7 +79,9 @@ namespace DistributedSystems
         public void Start()
         {
             RPCServiceHost.Open();
-            Console.WriteLine("IRPCOperations API endpoint listening at {0}", ListenUri);
+            Console.WriteLine("Listening at {0}", ListenUri);
+            Console.WriteLine("Address is " + Address);
+            Console.WriteLine("----------------------------------------------------------");
         }
         /// <summary>
         /// Stop this host. Send your IP to all other nodes so that they can remove you from the list.
@@ -205,12 +210,12 @@ namespace DistributedSystems
         /// <param name="Alg"></param>
         public void SelectAlgorithm(string Alg)
         {
-            if (Alg == "-tk")
+            if (Alg == "tk")
             {
                 DistrCalc = new TokenRing();
                 Console.WriteLine("Using TokenRing.");
             }
-            else if (Alg == "-ra")
+            else if (Alg == "ra")
             {
                 DistrCalc = new RicartAgrawala();
                 Console.WriteLine("Using RicartAgrawala.");
