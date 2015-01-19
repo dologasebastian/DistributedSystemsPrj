@@ -63,16 +63,13 @@ namespace DistributedSystems
         /// <summary>
         /// Processes an OK reply from some node in the network
         /// </summary>
-        public override void Acquire(Tuple<long, string> receivedLC)
+        public override void Acquire(string ip = null)
         {
             bool allReplied;
             List<string> network = Node.Instance.Network;
 
-            // Update Lamport clock
-            LC.EventReceive(receivedLC);
-
             // Add the reply to the list of received OK replies
-            ReceivedOKReplies.Add(receivedLC.Item2);
+            ReceivedOKReplies.Add(ip);
 
             // Check if all nodes in the network have already replied with OK
             // TODO: This can lead to deadlock if a new node joins the network!!!
@@ -89,12 +86,9 @@ namespace DistributedSystems
         /// </summary>
         public override void Release()
         {
-            // TODO: In case we consider each iteration as an event, we should put the LC.EventSend() in the foreach loop
-            Tuple<long, string> lcState = LC.EventSend();
-            
             foreach (string ip in WaitingQueue)
             {
-                SendOKReply(ip, lcState);
+                SendOKReply(ip);
             }
 
             WaitingQueue.Clear();
@@ -115,7 +109,7 @@ namespace DistributedSystems
                 MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
                 int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
                 Update(op, arg);
-                PropagateState();
+                PropagateState(op, arg);
                 CurrentlyUsingResource = false;
                 // Update Lamport clock for local event
                 LC.EventLocal();
@@ -169,16 +163,14 @@ namespace DistributedSystems
             }
         }
 
-        private void SendOKReply(string ip, Tuple<long, string> lcState = null)
+        private void SendOKReply(string ip)
         {
             if (ip != Node.Instance.Address)
             {
                 IRPCOperations API = Node.Instance.ConnectTo(ip);
                 if (API != null)
                 {
-                    Tuple<long, string> tempLcState = (lcState != null) ? lcState : LC.EventSend();
-
-                    API.raReply(tempLcState.Item2, tempLcState.Item1);
+                    API.raReply(LC.EventSend().Item2);
                 }
                 else
                 {
@@ -187,10 +179,9 @@ namespace DistributedSystems
             }
             else
             {
-                Tuple<long, string> tempLcState = (lcState != null) ? lcState : LC.EventSend();
                 Console.WriteLine("Receiving OK reply from self...");
 
-                Node.Instance.DistrCalc.Acquire(tempLcState);
+                Node.Instance.DistrCalc.Acquire(LC.EventSend().Item2);
             }
         }
 

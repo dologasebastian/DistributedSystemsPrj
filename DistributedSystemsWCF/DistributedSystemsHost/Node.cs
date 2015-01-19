@@ -210,7 +210,7 @@ namespace DistributedSystems
         /// <param name="Alg"></param>
         public void SelectAlgorithm(string Alg)
         {
-            if (Alg == "tk")
+            if (Alg == "tr")
             {
                 DistrCalc = new TokenRing();
                 Console.WriteLine("Using TokenRing.");
@@ -229,8 +229,10 @@ namespace DistributedSystems
         /// Method that starts one of the implemented Algorithms
         /// </summary>
         /// <param name="Algorithm"></param>
-        public void StartCalculation(int StartingValue = 0)
+        public void StartCalculation(int StartingValue, string alg)
         {
+            SelectAlgorithm(alg);
+
             // starting calculation from this Node. We know this for sure, so we give this Node the Token.
             DistrCalc.HasToken = true;
 
@@ -243,7 +245,7 @@ namespace DistributedSystems
                 // And they will all block until they receive the token to perform an operation
                 IRPCOperations API = ConnectTo(ip);
                 if (API != null)
-                    API.start_calculation(StartingValue);
+                    API.start_calculation(StartingValue, alg);
                 else
                     Console.WriteLine("Method: StartCalculation(). Problem trying to get the API for the client: " + ip);
             }

@@ -42,7 +42,7 @@ namespace DistributedSystems
         // --- Public Abstract Methods ---------------------------------------
         public abstract void Run(int Value);
         public abstract void Done();
-        public abstract void Acquire(Tuple<long, string> receivedLC = null);
+        public abstract void Acquire(string ip = null);
         public abstract void Release();
         public void Start(int? StartValue = null)
         {
@@ -55,9 +55,7 @@ namespace DistributedSystems
             Thread thread = new Thread(() => Run((int)StartValue));
             thread.Start();
         }
-
-        // --- Protected Methods ---------------------------------------------
-        protected void Update(MathOp op, int arg)
+        public void Update(MathOp op, int arg)
         {
             Console.WriteLine("Performing Operation: " + op + "(" + CurrentValue + ", " + arg + ")");
             switch (op)
@@ -79,16 +77,18 @@ namespace DistributedSystems
                     break;
             }
         }
-        protected void PropagateState()
+
+        // --- Protected Methods ---------------------------------------------        
+        protected void PropagateState(MathOp op, int val)
         {
-            Console.WriteLine("Sending current value (" + CurrentValue + ") to network");
+            Console.WriteLine("Sending current value (" + val + ") to network");
             foreach (string ip in Node.Instance.Network)
             {
                 if (!ip.Equals(Node.Instance.Address))
                 {
                     IRPCOperations API = Node.Instance.ConnectTo(ip);
                     if (API != null)
-                        API.propagate_state(CurrentValue);
+                        API.propagate_state((int)op, val);
                     else
                         Console.WriteLine("Method: PropagateState(). Problem trying to get the API for the client: " + ip);
 

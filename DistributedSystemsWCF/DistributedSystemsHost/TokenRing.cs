@@ -12,7 +12,7 @@ namespace DistributedSystems
         }
 
         // --- Public Methods --------------------------------------------        
-        public override void Acquire(Tuple<long, string> receivedLC = null)
+        public override void Acquire(string ip = null)
         {
             if (!HasToken)
             {
@@ -65,9 +65,10 @@ namespace DistributedSystems
                     Pool.WaitOne();
                 }
                 // We have the token, enter critical section
-                Update((MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length)),
-                    (int)(random.NextDouble() * 100) + 1);
-                PropagateState();
+                MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
+                int arg = (int)(random.NextDouble() * 100) + 1;
+                Update(op, arg);
+                PropagateState(op, arg);
                 // Done with critical section, release token
                 NeedsToAccessCriticalSection = false;
                 Release();                

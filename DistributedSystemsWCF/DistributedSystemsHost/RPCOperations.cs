@@ -26,7 +26,7 @@ namespace DistributedSystems
         /// <param name="val">The value to start/continue the computation</param>
         /// <returns></returns>
         [OperationContract]
-        int start_calculation(int val);
+        int start_calculation(int val, string alg);
         /// <summary>
         /// Informs the node that it has the token
         /// </summary>
@@ -40,7 +40,7 @@ namespace DistributedSystems
         /// <param name="Value"></param>
         /// <returns></returns>
         [OperationContract]
-        int propagate_state(int val);
+        int propagate_state(int op, int val);
         /// <summary>
         /// Called by a node when it wants to leave the network.
         /// </summary>
@@ -52,7 +52,7 @@ namespace DistributedSystems
         /// </summary>
         /// <returns></returns>
         [OperationContract]
-        int raReply(string ip, long clock);
+        int raReply(string ip);
         /// <summary>
         /// Informs all the other nodes that this nodes wants access to the resource (Used for Recard & Agrawala)
         /// </summary>
@@ -73,9 +73,10 @@ namespace DistributedSystems
             // return an Array of all connected IPs to this Node, except the one that called Join.
             return Network.ToArray();
         }
-        public int start_calculation(int val)
+        public int start_calculation(int val, string alg)
         {
             Console.WriteLine("Starting distributed calculation with value: " + val);
+            Node.Instance.SelectAlgorithm(alg);
             Node.Instance.DistrCalc.Start(val);
             
             return 0;
@@ -88,10 +89,10 @@ namespace DistributedSystems
 
             return 0;
         }
-        public int propagate_state(int val)
+        public int propagate_state(int op, int val)
         {
             Console.WriteLine("Receiving update " + val);
-            Node.Instance.DistrCalc.CurrentValue = val;
+            Node.Instance.DistrCalc.Update((MathOp)Enum.Parse(typeof(MathOp), op.ToString()), val);
 
             return 0;
         }
@@ -110,14 +111,11 @@ namespace DistributedSystems
                 return 1;
             }
         }
-        public int raReply(string ip, long clock)
+        public int raReply(string ip)
         {
-            Tuple<long, string> receivedLC;
             Console.WriteLine("Reciving OK reply...");
 
-            receivedLC = new Tuple<long, string>((long)clock, ip.ToString());
-
-            Node.Instance.DistrCalc.Acquire(receivedLC);
+            Node.Instance.DistrCalc.Acquire(ip);
 
             return 0;
         }

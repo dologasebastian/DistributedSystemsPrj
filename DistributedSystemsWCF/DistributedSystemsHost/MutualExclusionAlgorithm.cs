@@ -8,7 +8,7 @@ namespace DistributedSystems
 
         // --- Public Methods -----------------------------------------
         void Start(int? Value = null);
-        void Acquire(System.Tuple<long, string> receivedLC = null);
+        void Acquire(string ip = null);
         void Release();
     }
 }
