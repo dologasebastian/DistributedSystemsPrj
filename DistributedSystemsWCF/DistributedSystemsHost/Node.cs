@@ -231,6 +231,7 @@ namespace DistributedSystems
         /// <param name="Algorithm"></param>
         public void StartCalculation(int StartingValue, string alg)
         {
+            // selecting the desired algorithm
             SelectAlgorithm(alg);
 
             // starting calculation from this Node. We know this for sure, so we give this Node the Token.

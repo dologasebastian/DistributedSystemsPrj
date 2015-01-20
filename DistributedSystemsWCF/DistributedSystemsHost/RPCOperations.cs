@@ -74,9 +74,9 @@ namespace DistributedSystems
             return Network.ToArray();
         }
         public int start_calculation(int val, string alg)
-        {
-            Console.WriteLine("Starting distributed calculation with value: " + val);
+        {            
             Node.Instance.SelectAlgorithm(alg);
+            Console.WriteLine("Starting distributed calculation with value: " + val);
             Node.Instance.DistrCalc.Start(val);
             
             return 0;

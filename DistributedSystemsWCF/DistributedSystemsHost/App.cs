@@ -99,30 +99,18 @@ namespace DistributedSystems
                             node.Join(splits[1]);
                         }
                         break;
-                    case "alg":
-                        if (splits.Count() != 2)
-                        {
-                            System.Console.WriteLine("Please specify what algorithms you wish to use\n");
-                        }
-                        else
-                        {
-                            node.SelectAlgorithm(splits[1]);
-                        }
-                        break;
                     case "start":
-                        if (splits.Count() == 3)
+                        int startValue = 1;
+                        if (splits.Count() != 3)
                         {
-                            node.SelectAlgorithm(splits[2]);
+                            Console.WriteLine("Insufficient arguments.");
                         }
-
-                        int startValue = 4;
-                        if (splits.Count() > 1)
-                            int.TryParse(splits[1], out startValue);
                         else
-                            startValue = (int)((new Random()).NextDouble() * 100);
-                        node.StartCalculation(startValue, "tr");
-                        Console.WriteLine("Started calculation.");
-                        
+                        {
+                            int.TryParse(splits[1], out startValue);
+                            node.StartCalculation(startValue, splits[2]);
+                            Console.WriteLine("Started calculation.");
+                        }                        
                         break;
                     case "show":
                         string output = string.Empty;
@@ -280,11 +268,9 @@ namespace DistributedSystems
             Console.WriteLine();
             Console.WriteLine("Options:");
             Console.WriteLine("join 127.0.0.1        Join a specific Node in the network.");
-            Console.WriteLine("alg tr/ra             Select the desired algorithm:");
-            Console.WriteLine("                      Token Ring / Ricart & Agrawala.");
             Console.WriteLine("start (int) (alg)     Start a distributed calculation.");
             Console.WriteLine("         (int)        Specify initial value if desired.");
-            Console.WriteLine("         tk/ra        Token Ring / Ricart & Agrawala.");
+            Console.WriteLine("         tr/ra        Token Ring / Ricart & Agrawala.");
             Console.WriteLine("signoff               Sign off from the network.");
             Console.WriteLine("show                  Show information related to this node.");
             Console.WriteLine("quit                  Close the node and it's connections.");

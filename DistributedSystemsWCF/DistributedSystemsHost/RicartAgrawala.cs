@@ -148,7 +148,8 @@ namespace DistributedSystems
 
             ResetReceivedOKReplies();
 
-            foreach (var ip in network)
+            // SED: changed this and added a filter .Where(x => x != Node.Instance.Address)
+            foreach (var ip in network.Where(x => x != Node.Instance.Address))
             {
                 IRPCOperations API = node.ConnectTo(ip);
                 if (API != null)

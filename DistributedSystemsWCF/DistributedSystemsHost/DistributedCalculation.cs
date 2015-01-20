@@ -57,24 +57,27 @@ namespace DistributedSystems
         }
         public void Update(MathOp op, int arg)
         {
-            Console.WriteLine("Performing Operation: " + op + "(" + CurrentValue + ", " + arg + ")");
-            switch (op)
+            lock (ThisLock)
             {
-                case MathOp.Add:
-                    CurrentValue += arg;
-                    break;
-                case MathOp.Sub:
-                    CurrentValue -= arg;
-                    break;
-                case MathOp.Mul:
-                    CurrentValue *= arg;
-                    break;
-                case MathOp.Div:
-                    CurrentValue /= arg;
-                    break;
-                default:
-                    CurrentValue += arg;
-                    break;
+                Console.WriteLine("Performing Operation: " + op + "(" + CurrentValue + ", " + arg + ")");
+                switch (op)
+                {
+                    case MathOp.Add:
+                        CurrentValue += arg;
+                        break;
+                    case MathOp.Sub:
+                        CurrentValue -= arg;
+                        break;
+                    case MathOp.Mul:
+                        CurrentValue *= arg;
+                        break;
+                    case MathOp.Div:
+                        CurrentValue /= arg;
+                        break;
+                    default:
+                        CurrentValue += arg;
+                        break;
+                }
             }
         }
 
