@@ -208,7 +208,7 @@ namespace DistributedSystems
             int cnt = 1;
 
             Stopwatch watch = Stopwatch.StartNew();
-
+            CreatePingers(105);
             foreach (Ping p in pingers)
             {
                 lock (@lock)
@@ -224,6 +224,7 @@ namespace DistributedSystems
             {
                 wait.SpinOnce();
             }
+            DestroyPingers();
         }
         private static void Ping_completed(object s, PingCompletedEventArgs e)
         {
@@ -245,7 +246,7 @@ namespace DistributedSystems
         }
         private static void CreatePingers(int cnt)
         {
-            for (int i = 1; i <= cnt; i++)
+            for (int i = 100; i <= cnt; i++)
             {
                 Ping p = new Ping();
                 p.PingCompleted += Ping_completed;
