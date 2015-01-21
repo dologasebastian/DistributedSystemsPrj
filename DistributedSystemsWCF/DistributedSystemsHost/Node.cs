@@ -252,7 +252,7 @@ namespace DistributedSystems
             }
             // This is the only node with the token
             Console.WriteLine("Starting calculation...");
-            DistrCalc.Start();
+            DistrCalc.Start(StartingValue);
         }
     }
 }
