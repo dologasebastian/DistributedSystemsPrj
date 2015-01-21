@@ -19,6 +19,7 @@ namespace DistributedSystems
         private static int result = 0;
         private static object @lock = new object();
         private static Node node = null;
+        private static List<string> IPs = new List<string>();
 
         // --- Main -----------------------------------------------------
         static void Main(string[] args)
@@ -205,18 +206,22 @@ namespace DistributedSystems
 
 
             SpinWait wait = new SpinWait();
-            int cnt = 1;
+            int cnt = 101;
+            CreatePingers(10);
 
             Stopwatch watch = Stopwatch.StartNew();
-            CreatePingers(105);
+            
             foreach (Ping p in pingers)
             {
                 lock (@lock)
                 {
                     instances += 1;
                 }
+                string ip = string.Concat(BaseIP, cnt.ToString());
+                if (ip == IP)
+                    ip = string.Concat(BaseIP, (cnt++).ToString());
 
-                p.SendAsync(string.Concat(BaseIP, cnt.ToString()), 100, data, po);
+                p.SendAsync(ip, 200, data, po);
                 cnt += 1;
             }
 
@@ -225,6 +230,26 @@ namespace DistributedSystems
                 wait.SpinOnce();
             }
             DestroyPingers();
+
+            Console.WriteLine("Found " + IPs.Count + " IPs."); 
+            foreach(string i in IPs)
+            {
+                Console.WriteLine("Join " + i + " ?   y/n");
+                while (true)
+                {
+                    string key = Console.ReadLine();
+                    if (key == "y")
+                    {
+                        node.Join(i);
+                        break;
+                    }
+                    else if (key == "n")
+                        break;
+                    else
+                        Console.WriteLine("Unkown command. Try again.");
+                }
+            }
+            Console.WriteLine("----------------------------------------------------------");
         }
         private static void Ping_completed(object s, PingCompletedEventArgs e)
         {
@@ -235,9 +260,9 @@ namespace DistributedSystems
 
             if (e.Reply.Status == IPStatus.Success)
             {
-                Console.WriteLine(string.Concat("Active IP: ", e.Reply.Address.ToString()));
+                //Console.WriteLine(string.Concat("Active IP: ", e.Reply.Address.ToString()));
                 result += 1;
-                node.Join(e.Reply.Address.ToString());
+                IPs.Add(e.Reply.Address.ToString());
             }
             else
             {
@@ -246,7 +271,7 @@ namespace DistributedSystems
         }
         private static void CreatePingers(int cnt)
         {
-            for (int i = 100; i <= cnt; i++)
+            for (int i = 1; i <= cnt; i++)
             {
                 Ping p = new Ping();
                 p.PingCompleted += Ping_completed;
