@@ -114,7 +114,7 @@ namespace DistributedSystems
                         .ThenBy(x => int.Parse(x.Split('.')[1]))
                         .ThenBy(x => int.Parse(x.Split('.')[2]))
                         .ThenBy(x => int.Parse(x.Split('.').Last())).ToList();
-                    if (System.Diagnostics.Debugger.IsAttached) Console.WriteLine("Joined network successfully");
+                    if (System.Diagnostics.Debugger.IsAttached) Console.WriteLine("Joined network successfully.");
                     return true;
                 }
                 if (System.Diagnostics.Debugger.IsAttached) Console.WriteLine("A non-fatal problem occured while trying to join.");

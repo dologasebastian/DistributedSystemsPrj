@@ -115,10 +115,16 @@ namespace DistributedSystems
                         break;
                     case "show":
                         string output = string.Empty;
-                        Console.WriteLine("Current node address: " + node.Address);
+                        Console.WriteLine("Current node address:");
+                        Console.WriteLine(node.Address);
+                        Console.WriteLine("Nodes connected:");
+                        if (node.Network.Count > 1)
+                        {
                         foreach (string network in node.Network)
-                            output += network + "  ";
-                        Console.WriteLine("Nodes connected: " + (!string.IsNullOrEmpty(output) ? output : "None"));
+                            Console.WriteLine(network);
+                        }
+                        else
+                            Console.WriteLine("None");
                         break;
                     case "signoff":
                         node.SignOff();
@@ -222,7 +228,7 @@ namespace DistributedSystems
                     ip = string.Concat(BaseIP, (cnt++).ToString());
 
                 p.SendAsync(ip, 200, data, po);
-                cnt += 1;
+                cnt ++;
             }
 
             while (instances > 0)
