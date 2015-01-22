@@ -9,188 +9,170 @@ namespace DistributedSystems
 {
     public class RicartAgrawala : DistributedCalculation
     {
+        public static readonly int DURATION = 20;
+
         // --- Private Properties ----------------------------------------
-        private LamportClock LC;
-        private Queue<string> WaitingQueue;
-        private List<string> ReceivedOKReplies;
-        private bool CurrentlyUsingResource = false;
+        private LamportClock Clock;
+        private bool Acquiring = false;
+        private long SentTimeStamp;
+        private bool IsLocked = false;
+        //private CountdownEvent Latch;
+        private HashSet<string> Replied = new HashSet<string>();
+        private Queue<string> PendingReplies = new Queue<string>();
 
-        // --- Constructor -----------------------------------------------
-        public RicartAgrawala() : base(false)
+        public RicartAgrawala()
+            : base(false)
         {
-            Reset();
+            Clock = new LamportClock(Node.Instance.Address);
         }
 
-        // --- Public Methods -------------------------------------------
-        /// <summary>
-        /// Process received reequest from another node in the network
-        /// </summary>
-        /// <param name="receivedLC">Received Lamport clock state</param>
-        public void ReceiveRequest(Tuple<long, string> receivedLC)
+        public bool ShouldStop()
         {
-            string requesterIP = receivedLC.Item2;
-            
-            LC.EventReceive(receivedLC);
-
-            if (NeedsToAccessCriticalSection)
-            {
-                if (CurrentlyUsingResource)
-                {
-                    WaitingQueue.Enqueue(requesterIP);
-                }
-                else
-                {
-                    if (LC.Compare(receivedLC) < 0)
-                    {
-                        WaitingQueue.Enqueue(requesterIP);
-                    }
-                    else
-                    {
-                        SendOKReply(requesterIP);
-                    }
-                }
-            }
-            else
-            {
-                SendOKReply(requesterIP);
-            }
+            return (DateTime.Now - StartTime).TotalSeconds > DURATION;
         }
-        // ----------- Inherited Public Methods -------------------------
-        /// <summary>
-        /// Processes an OK reply from some node in the network
-        /// </summary>
-        public override void Acquire(string ip = null)
-        {
-            bool allReplied;
-            List<string> network = Node.Instance.Network;
 
-            // II: not sure about this, but in the Java implementation
-            // the clock is incremented when receiving an ok reply
-            LC.EventLocal();
-
-            // Add the reply to the list of received OK replies
-            ReceivedOKReplies.Add(ip);
-
-            // Check if all nodes in the network have already replied with OK
-            // TODO: This can lead to deadlock if a new node joins the network!!!
-            allReplied = network.All(x => ReceivedOKReplies.Contains(x));
-
-            // If yes, allow access
-            if (allReplied)
-            {
-                Pool.Release();
-            }
-        }
-        /// <summary>
-        /// Sends an OK reply to the all elements in the WaitingQueue
-        /// </summary>
-        public override void Release()
-        {
-            foreach (string ip in WaitingQueue)
-            {
-                SendOKReply(ip);
-            }
-
-            WaitingQueue.Clear();
-        }
         public override void Run(int Value)
         {
             CurrentValue = Value;
-            while (!((DateTime.Now - StartTime).TotalSeconds > 20.0)) // predefined period of 3 seconds
+
+            while (!ShouldStop())
             {
-                //lock (ThisLock)
-                //{
                 NeedsToAccessCriticalSection = true;
-                // Request access to all nodes in the network
                 RequestToAll();
-                Pool.WaitOne();
-                // We have the token, enter critical section
-                CurrentlyUsingResource = true;
+    
                 MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
                 int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
                 Update(op, arg);
-                // Update Lamport clock for local event
-                //LC.EventLocal();
                 PropagateState(op, arg);
-                CurrentlyUsingResource = false;
+    
                 NeedsToAccessCriticalSection = false;
-                // Done with critical section, release token
                 Release();
-                //}
-
+    
+                int sleepInterval = 500 + random.Next(500);
                 try
                 {
-                    int sleepInterval = 500 + (int)(random.NextDouble() * 500);
-                    //Console.WriteLine("Sleeping for " + sleepInterval);
+                    Console.WriteLine("Sleeping for " + sleepInterval);
                     Thread.Sleep(sleepInterval);
                 }
-                catch (ThreadInterruptedException e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.StackTrace);
                 }
             }
+            //Finished = true;
             Done();
         }
+
+        public void RequestToAll()
+        {
+            if (IsLocked) return;
+            System.Diagnostics.Debug.Assert(!Acquiring);
+            Acquiring = true;
+            Clock.EventSend();
+    
+            // Should receive a response from every other node in the network
+            //Latch = new CountdownEvent(Node.Instance.Network.Count - 1);
+            Pool = new Semaphore(0, Node.Instance.Network.Count - 1);
+            Replied.Clear();
+    
+            SentTimeStamp = Clock.ToTuple().Item1;
+            foreach (string ip in Node.Instance.Network)
+            {
+                if (ip != Node.Instance.Address)
+                {
+                    IRPCOperations API = Node.Instance.ConnectTo(ip);
+                    API.raRequest(Node.Instance.Address, SentTimeStamp);
+                }
+            }
+    
+            try
+            {
+                // When all other nodes reply this will move forward
+                while (Pool.Equals(Node.Instance.Network.Count - 1))//(!Latch.Wait(3000))
+                {
+                    Thread.Sleep(3000);
+                    Console.WriteLine("Received replies from: " + String.Concat(Replied, ", "));
+                    Console.WriteLine("Current count: " + Pool.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+            Acquiring = false;
+            IsLocked = true;
+            Pool = null;
+        }
+    
+    
+        public void MessageReceived(string ip, long k)
+        {
+            Clock.EventReceive(new Tuple<long, string>(k, ip));
+    
+            // If not interested in critical section reply with 'OK'
+            if (!NeedsToAccessCriticalSection)
+            {
+                Node.Instance.ConnectTo(ip).raReply(Node.Instance.Address);
+            // Wants critical section but doesn't have the lock yet
+            }
+            else if (Acquiring)
+            {
+                // I win (the result of this comparison should be the same on the sender as well
+                if (new LamportClock(SentTimeStamp, Node.Instance.Address).Compare(new Tuple<long, string>(k, ip)) < 0)
+                {
+                    PendingReplies.Enqueue(ip);
+                // I lose
+                }
+                else
+                {
+                    Node.Instance.ConnectTo(ip).raReply(Node.Instance.Address);
+                }
+            // In the resource
+            }
+            else
+            {
+                PendingReplies.Enqueue(ip);
+            }
+        }
+
+        public override void Acquire(string ip)
+        {
+            System.Diagnostics.Debug.Assert(Acquiring);
+            Clock.EventLocal();
+            Replied.Add(ip);
+
+            if (Pool != null)
+            {
+                Pool.Release();
+            }
+            else
+            {
+                Console.WriteLine("Error");
+            }
+        }
+    
+        public override void Release()
+        {
+            // send all pending messages
+            IsLocked = false;
+            while (PendingReplies.Count > 0)
+            {
+                string ip = PendingReplies.Dequeue();
+                Node.Instance.ConnectTo(ip).raReply(Node.Instance.Address);
+            }
+        }
+    
         public override void Done()
         {
-            Console.WriteLine("Done!");
+            Console.WriteLine("DONE!!!");
             Console.WriteLine("Final result: " + CurrentValue);
 
             Reset();
         }
-
-        // --- Private Methods -------------------------------------------------
-        /// <summary>
-        /// Send request for access to the resource to all nodes in the network
-        /// </summary>
-        private void RequestToAll()
+    
+        public bool HasLock()
         {
-            Node node = Node.Instance;
-            List<string> network = node.Network;
-
-            ResetReceivedOKReplies();
-
-            Tuple<long, string> lcState = LC.EventSend();
-            
-            foreach (var ip in network)
-            {
-                IRPCOperations API = node.ConnectTo(ip);
-                if (API != null)
-                {
-                    API.raRequest(lcState.Item2, lcState.Item1);
-                }
-                else
-                {
-                    Console.WriteLine("Method: RequestToAll(). Problem trying to get the API for the client: " + ip);
-                }
-            }
-        }
-
-        private void SendOKReply(string ip)
-        {
-            if (ip != Node.Instance.Address)
-            {
-                IRPCOperations API = Node.Instance.ConnectTo(ip);
-                if (API != null)
-                {
-                    API.raReply(Node.Instance.Address);
-                }
-                else
-                {
-                    Console.WriteLine("Method: SendOKReply(). Problem trying to get the API");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Receiving OK reply from self...");
-
-                Node.Instance.DistrCalc.Acquire(Node.Instance.Address);
-            }
-        }
-
-        private void ResetReceivedOKReplies()
-        {
-            ReceivedOKReplies = new List<string>();
+            return IsLocked;
         }
 
         protected override void Reset()
@@ -202,12 +184,12 @@ namespace DistributedSystems
             StartTime = DateTime.Now;
             HasStarted = false;
 
-            // Initialize the Lamport clock
-            this.LC = new LamportClock(Node.Instance.Address);
-
-            this.WaitingQueue = new Queue<string>();
-
-            ResetReceivedOKReplies();
+            Clock = new LamportClock(Node.Instance.Address);
+            Acquiring = false;
+            IsLocked = false;
+            //Latch; ??
+            Replied = new HashSet<string>();
+            PendingReplies = new Queue<string>();
         }
     }
 }

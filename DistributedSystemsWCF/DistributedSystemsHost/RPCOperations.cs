@@ -121,14 +121,13 @@ namespace DistributedSystems
         }
         public int raRequest(string ip, long clock)
         {
-            Tuple<long, string> receivedLC = new Tuple<long, string>(clock, ip);
             try
             {
                 DistributedCalculation algo = Node.Instance.DistrCalc;
                 if (algo.GetType() == typeof(RicartAgrawala))
                 {
                     Console.WriteLine("Process received request...");
-                    ((RicartAgrawala)algo).ReceiveRequest(receivedLC);
+                    ((RicartAgrawala)algo).MessageReceived(ip, clock);
                 }
                 else
                 {

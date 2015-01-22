@@ -22,6 +22,12 @@ namespace DistributedSystems
             this.Ip = ip;
         }
 
+        public LamportClock(long counter, string ip)
+        {
+            this.Counter = counter;
+            this.Ip = ip;
+        }
+
         /// <summary>
         /// Update the clock in case of a "Local" event.
         /// </summary>
