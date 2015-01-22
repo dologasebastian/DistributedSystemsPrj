@@ -18,12 +18,7 @@ namespace DistributedSystems
         // --- Constructor -----------------------------------------------
         public RicartAgrawala() : base(false)
         {
-            // Initialize the Lamport clock
-            this.LC = new LamportClock(Node.Instance.Address);
-            
-            this.WaitingQueue = new Queue<string>();
-            
-            ResetReceivedOKReplies();
+            Reset();
         }
 
         // --- Public Methods -------------------------------------------
@@ -48,14 +43,14 @@ namespace DistributedSystems
                     }
                     else
                     {
-                        LC.EventReceive(receivedLC);
+                        //LC.EventReceive(receivedLC);
                         SendOKReply(requesterIP);
                     }
                 }
             }
             else
             {
-                LC.EventReceive(receivedLC);
+                //LC.EventReceive(receivedLC);
                 SendOKReply(requesterIP);
             }
         }
@@ -73,7 +68,7 @@ namespace DistributedSystems
 
             // Check if all nodes in the network have already replied with OK
             // TODO: This can lead to deadlock if a new node joins the network!!!
-            allReplied = network.AsParallel().All(x => ReceivedOKReplies.Contains(x));
+            allReplied = network.All(x => ReceivedOKReplies.Contains(x));
 
             // If yes, allow access
             if (allReplied)
@@ -96,7 +91,7 @@ namespace DistributedSystems
         public override void Run(int Value)
         {
             CurrentValue = Value;
-            while (!((DateTime.Now - StartTime).TotalSeconds > 3.0)) // predefined period of 3 seconds
+            while (!((DateTime.Now - StartTime).TotalSeconds > 20.0)) // predefined period of 3 seconds
             {
                 //lock (ThisLock)
                 //{
@@ -109,19 +104,19 @@ namespace DistributedSystems
                 MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
                 int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
                 Update(op, arg);
-                PropagateState(op, arg);
-                CurrentlyUsingResource = false;
                 // Update Lamport clock for local event
                 LC.EventLocal();
+                PropagateState(op, arg);
+                CurrentlyUsingResource = false;
+                NeedsToAccessCriticalSection = false;
                 // Done with critical section, release token
                 Release();
-                NeedsToAccessCriticalSection = false;
                 //}
 
                 try
                 {
                     int sleepInterval = 500 + (int)(random.NextDouble() * 500);
-                    Console.WriteLine("Sleeping for " + sleepInterval);
+                    //Console.WriteLine("Sleeping for " + sleepInterval);
                     Thread.Sleep(sleepInterval);
                 }
                 catch (ThreadInterruptedException e)
@@ -135,6 +130,8 @@ namespace DistributedSystems
         {
             Console.WriteLine("Done!");
             Console.WriteLine("Final result: " + CurrentValue);
+
+            Reset();
         }
 
         // --- Private Methods -------------------------------------------------
@@ -148,13 +145,13 @@ namespace DistributedSystems
 
             ResetReceivedOKReplies();
 
-            // SED: changed this and added a filter .Where(x => x != Node.Instance.Address)
-            foreach (var ip in network.Where(x => x != Node.Instance.Address))
+            Tuple<long, string> lcState = LC.EventSend();
+            
+            foreach (var ip in network)
             {
                 IRPCOperations API = node.ConnectTo(ip);
                 if (API != null)
                 {
-                    Tuple<long, string> lcState = LC.EventSend();
                     API.raRequest(lcState.Item2, lcState.Item1);
                 }
                 else
@@ -189,6 +186,23 @@ namespace DistributedSystems
         private void ResetReceivedOKReplies()
         {
             ReceivedOKReplies = new List<string>();
+        }
+
+        protected override void Reset()
+        {
+            CurrentValue = 0;
+            NeedsToAccessCriticalSection = false;
+            this.HasToken = false;
+            Pool = new Semaphore(0, 1);
+            StartTime = DateTime.Now;
+            HasStarted = false;
+
+            // Initialize the Lamport clock
+            this.LC = new LamportClock(Node.Instance.Address);
+
+            this.WaitingQueue = new Queue<string>();
+
+            ResetReceivedOKReplies();
         }
     }
 }

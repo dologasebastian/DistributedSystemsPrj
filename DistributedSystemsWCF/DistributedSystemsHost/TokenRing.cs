@@ -55,7 +55,7 @@ namespace DistributedSystems
         public override void Run(int Value)
         {
             CurrentValue = Value;
-            while (!((DateTime.Now - StartTime).TotalSeconds > 3.0)) // predefined period of 3 seconds
+            while (!((DateTime.Now - StartTime).TotalSeconds > 20.0)) // predefined period of 3 seconds
             {
                 Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
 
@@ -76,7 +76,7 @@ namespace DistributedSystems
                 try
                 {
                     int sleepInterval = 50 + (int)(random.NextDouble() * 200);
-                    Console.WriteLine("Sleeping for " + sleepInterval);
+                    //Console.WriteLine("Sleeping for " + sleepInterval);
                     Thread.Sleep(sleepInterval);
                 }
                 catch (ThreadInterruptedException e)
@@ -89,8 +89,19 @@ namespace DistributedSystems
         public override void Done()
         {
             Console.WriteLine("DONE!!!");
-            HasToken = false;
             Console.WriteLine("Final result: " + CurrentValue);
+
+            Reset();
+        }
+
+        protected override void Reset()
+        {
+            CurrentValue = 0;
+            NeedsToAccessCriticalSection = false;
+            this.HasToken = false;
+            Pool = new Semaphore(0, 1);
+            StartTime = DateTime.Now;
+            HasStarted = false;
         }
     }
 }

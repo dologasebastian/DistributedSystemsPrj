@@ -9,10 +9,8 @@ namespace DistributedSystems
 {
     public abstract class DistributedCalculation : MutualExclusionAlgorithm
     {
-        // --- Private Properties ---------------------------------------------
-        private bool HasStarted = false;
-
         // --- Protected Properties -------------------------------------------
+        protected bool HasStarted = false;
         protected static Random random = new Random();
         protected Object ThisLock = new Object();
         protected DateTime StartTime;
@@ -42,6 +40,7 @@ namespace DistributedSystems
         // --- Public Abstract Methods ---------------------------------------
         public abstract void Run(int Value);
         public abstract void Done();
+        protected abstract void Reset();
         public abstract void Acquire(string ip = null);
         public abstract void Release();
         public void Start(int? StartValue = null)
@@ -84,7 +83,7 @@ namespace DistributedSystems
         // --- Protected Methods ---------------------------------------------        
         protected void PropagateState(MathOp op, int val)
         {
-            Console.WriteLine("Sending current value (" + val + ") to network");
+            Console.WriteLine("Sending: Operator(" + ((MathOp)Enum.Parse(typeof(MathOp), op.ToString())).ToString() + "), Argument(" + val + ")");
             foreach (string ip in Node.Instance.Network)
             {
                 if (!ip.Equals(Node.Instance.Address))

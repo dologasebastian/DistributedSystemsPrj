@@ -15,6 +15,7 @@ namespace DistributedSystems
     {
         private readonly string Ip;
         private long Counter = 0;
+        private Object ThisLock = new Object();
 
         public LamportClock(string ip)
         {
@@ -64,9 +65,12 @@ namespace DistributedSystems
             return this.ToTuple();
         }
         
-        private long IncCounter()
+        private void IncCounter()
         {
-            return ++Counter;
+            lock (ThisLock)
+            {
+                ++Counter;
+            }
         }
 
         /// <summary>

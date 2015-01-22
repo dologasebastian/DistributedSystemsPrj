@@ -91,7 +91,7 @@ namespace DistributedSystems
         }
         public int propagate_state(int op, int val)
         {
-            Console.WriteLine("Receiving update " + val);
+            Console.WriteLine("Receiving: Operator(" + ((MathOp)Enum.Parse(typeof(MathOp), op.ToString())).ToString() + "), Argument(" + val + ")");
             Node.Instance.DistrCalc.Update((MathOp)Enum.Parse(typeof(MathOp), op.ToString()), val);
 
             return 0;
