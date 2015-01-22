@@ -29,6 +29,9 @@ namespace DistributedSystems
         public void ReceiveRequest(Tuple<long, string> receivedLC)
         {
             string requesterIP = receivedLC.Item2;
+            
+            LC.EventReceive(receivedLC);
+
             if (NeedsToAccessCriticalSection)
             {
                 if (CurrentlyUsingResource)
@@ -43,14 +46,12 @@ namespace DistributedSystems
                     }
                     else
                     {
-                        //LC.EventReceive(receivedLC);
                         SendOKReply(requesterIP);
                     }
                 }
             }
             else
             {
-                //LC.EventReceive(receivedLC);
                 SendOKReply(requesterIP);
             }
         }
@@ -62,6 +63,10 @@ namespace DistributedSystems
         {
             bool allReplied;
             List<string> network = Node.Instance.Network;
+
+            // II: not sure about this, but in the Java implementation
+            // the clock is incremented when receiving an ok reply
+            LC.EventLocal();
 
             // Add the reply to the list of received OK replies
             ReceivedOKReplies.Add(ip);
@@ -105,7 +110,7 @@ namespace DistributedSystems
                 int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
                 Update(op, arg);
                 // Update Lamport clock for local event
-                LC.EventLocal();
+                //LC.EventLocal();
                 PropagateState(op, arg);
                 CurrentlyUsingResource = false;
                 NeedsToAccessCriticalSection = false;
@@ -168,7 +173,7 @@ namespace DistributedSystems
                 IRPCOperations API = Node.Instance.ConnectTo(ip);
                 if (API != null)
                 {
-                    API.raReply(LC.EventSend().Item2);
+                    API.raReply(Node.Instance.Address);
                 }
                 else
                 {
@@ -179,7 +184,7 @@ namespace DistributedSystems
             {
                 Console.WriteLine("Receiving OK reply from self...");
 
-                Node.Instance.DistrCalc.Acquire(LC.EventSend().Item2);
+                Node.Instance.DistrCalc.Acquire(Node.Instance.Address);
             }
         }
 
