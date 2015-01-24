@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="CountDownLatch.cs" />
     <Compile Include="DistributedCalculation.cs" />
     <Compile Include="LamportClock.cs" />
     <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcDataContractSerializer.cs" />

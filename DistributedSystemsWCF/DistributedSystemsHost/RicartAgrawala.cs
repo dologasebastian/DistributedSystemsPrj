@@ -14,7 +14,7 @@ namespace DistributedSystems
         private bool Acquiring = false;
         private long SentTimeStamp;
         private bool IsLocked = false;
-        //private CountdownEvent Latch;
+        private CountdownLatch Latch;
         private HashSet<string> Replied = new HashSet<string>();
         private Queue<string> PendingReplies = new Queue<string>();
 
@@ -31,7 +31,7 @@ namespace DistributedSystems
             IsLocked = initiallyLocked;
             if (initiallyLocked)
             {
-                Pool = new Semaphore(0, 1);
+                Latch = new CountdownLatch(0);
             }
         }
 
@@ -74,8 +74,7 @@ namespace DistributedSystems
             Clock.EventSend();
     
             // Should receive a response from every other node in the network
-            //Latch = new CountdownEvent(Node.Instance.Network.Count - 1);
-            Pool = new Semaphore(0, Node.Instance.Network.Count < 2 ? 1 : (Node.Instance.Network.Count - 1));
+            Latch = new CountdownLatch(Node.Instance.Network.Count - 1);
             Replied.Clear();
     
             SentTimeStamp = Clock.ToTuple().Item1;
@@ -91,12 +90,13 @@ namespace DistributedSystems
             try
             {
                 // When all other nodes reply this will move forward
-                while (!Pool.Equals(Node.Instance.Network.Count - 1))//(!Latch.Wait(3000))
+                Latch.Wait();
+                /*while (!Pool.Equals(Node.Instance.Network.Count - 1))//(!Latch.Wait(3000))
                 {
                     Thread.Sleep(2);
                     Console.WriteLine("Received replies from: " + String.Concat(Replied, ", "));
                     Console.WriteLine("Current count: " + Pool.ToString());
-                }
+                }*/
             }
             catch (Exception e)
             {
@@ -104,7 +104,7 @@ namespace DistributedSystems
             }
             Acquiring = false;
             IsLocked = true;
-            Pool = null;
+            Latch = null;
         }
     
     
@@ -147,9 +147,9 @@ namespace DistributedSystems
             Clock.EventLocal();
             Replied.Add(ip);
 
-            if (Pool != null)
+            if (Latch != null && Latch.GetCount() > 0)
             {
-                Pool.Release();
+                Latch.CountDown();
             }
             else
             {
@@ -178,15 +178,13 @@ namespace DistributedSystems
             CurrentValue = 0;
             NeedsToAccessCriticalSection = false;
             this.HasToken = false;
-            if (Pool != null) Pool.Dispose();
-            Pool = new Semaphore(0, 1);
             StartTime = DateTime.Now;
             HasStarted = false;
 
             Clock = new LamportClock(Node.Instance.Address);
             Acquiring = false;
             IsLocked = false;
-            //Latch; ??
+            Latch = new CountdownLatch(0);
             Replied = new HashSet<string>();
             PendingReplies = new Queue<string>();
         }
