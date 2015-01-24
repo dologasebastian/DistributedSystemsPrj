@@ -124,7 +124,7 @@ namespace DistributedSystems
         }
         public int raReply(string ip)
         {
-            Console.WriteLine("Reciving OK reply...");
+            Console.WriteLine("Reciving OK reply from " + ip + "...");
 
             Node.Instance.DistrCalc.Acquire(ip);
 
@@ -137,7 +137,7 @@ namespace DistributedSystems
                 DistributedCalculation algo = Node.Instance.DistrCalc;
                 if (algo.GetType() == typeof(RicartAgrawala))
                 {
-                    Console.WriteLine("Process received request...");
+                    Console.WriteLine("Process received request from " + ip + "...");
                     ((RicartAgrawala)algo).MessageReceived(ip, clock);
                 }
                 else
