@@ -72,7 +72,7 @@ namespace DistributedSystems
     
             // Should receive a response from every other node in the network
             //Latch = new CountdownEvent(Node.Instance.Network.Count - 1);
-            Pool = new Semaphore(0, Node.Instance.Network.Count - 1);
+            Pool = new Semaphore(0, Node.Instance.Network.Count < 2 ? 1 : (Node.Instance.Network.Count - 1));
             Replied.Clear();
     
             SentTimeStamp = Clock.ToTuple().Item1;
