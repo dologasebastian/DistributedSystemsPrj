@@ -110,23 +110,12 @@ namespace DistributedSystems
                 if (API != null) // if succesful connection Join the entire network
                 {
                     string n = API.join(Address);
-                    if (n != "")
+                    if (!string.IsNullOrEmpty(n))
                     {
-                        List<string> nodes = n.Split(',').Where(x => x != "").ToList();
+                        List<string> nodes = n.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToList();
                         if (nodes != null && nodes.Count() > 0)
                             Network.AddRange(nodes);
-
-                        Network = new HashSet<string>(Network).ToList();
-
-                        foreach(string ipn in Network.Where(x => x != IP))
-                        {
-                            API = ConnectTo(IP);
-                            if (API != null) // if succesful connection Join the entire network
-                            {
-                                API.join(ipn);
-                            }
-                        }
-
+                        
                         // Nodes should have an ordering in the ring
                         // They are ordered by their IP addresses
                         // TODO: Shouldn't it be "Network = Network.Order....ToList();"?

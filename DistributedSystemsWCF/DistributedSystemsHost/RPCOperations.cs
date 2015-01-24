@@ -70,14 +70,22 @@ namespace DistributedSystems
         public string join(string ip)
         {
             string Network = "";
-            foreach (string i in Node.Instance.Network)
-                Network += i + ",";
             if (!Node.Instance.Network.Contains(ip))
             {
                 Node.Instance.Network.Add(ip); // Add requesting node to this network
+                Node.Instance.Network = new HashSet<string>(Node.Instance.Network).ToList();
                 Console.WriteLine(ip + " joined the network.");
-            }
-            
+
+                foreach (string i in Node.Instance.Network.Where(x => x != ip))
+                {
+                    Network += i + ",";
+                    IRPCOperations API = Node.Instance.ConnectTo(i);
+                    if (API != null)
+                    {
+                        API.join(ip);
+                    }
+                }
+            }            
             // return an Array of all connected IPs to this Node, except the one that called Join.
             return Network;
         }
