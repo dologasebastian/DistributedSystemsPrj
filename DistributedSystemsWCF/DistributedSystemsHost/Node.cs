@@ -218,7 +218,7 @@ namespace DistributedSystems
         /// Select the desired Algorithm.
         /// </summary>
         /// <param name="Alg"></param>
-        public void SelectAlgorithm(string Alg)
+        public void SelectAlgorithm(string Alg, bool isLocked = false)
         {
             if (Alg == "tr")
             {
@@ -227,7 +227,7 @@ namespace DistributedSystems
             }
             else if (Alg == "ra")
             {
-                DistrCalc = new RicartAgrawala();
+                DistrCalc = new RicartAgrawala(isLocked);
                 Console.WriteLine("Using RicartAgrawala.");
             }
             else
@@ -242,7 +242,7 @@ namespace DistributedSystems
         public void StartCalculation(int StartingValue, string alg)
         {
             // selecting the desired algorithm
-            SelectAlgorithm(alg);
+            SelectAlgorithm(alg, true);
 
             // starting calculation from this Node. We know this for sure, so we give this Node the Token.
             DistrCalc.HasToken = true;
