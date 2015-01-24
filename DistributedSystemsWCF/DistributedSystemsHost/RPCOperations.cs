@@ -93,6 +93,7 @@ namespace DistributedSystems
         {            
             Node.Instance.SelectAlgorithm(alg);
             Console.WriteLine("Starting distributed calculation with value: " + val);
+            System.Threading.Thread.Sleep(30);
             Node.Instance.DistrCalc.Start(val);
             
             return 0;
@@ -147,7 +148,7 @@ namespace DistributedSystems
                 }
                 else
                 {
-                    throw new Exception("RPCOperations: Method RequestToken is only available for Ricart & Agrawala algorithm.");
+                    throw new Exception("RPCOperations: Method raRequest is only available for Ricart & Agrawala algorithm.");
                 }
             }
             catch (Exception e)
