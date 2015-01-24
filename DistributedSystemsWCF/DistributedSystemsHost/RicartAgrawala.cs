@@ -141,14 +141,21 @@ namespace DistributedSystems
             Clock.EventLocal();
             Replied.Add(ip);
 
-            if (Pool != null)
+            /*if (Pool != null)
             {
                 Pool.Release();
             }
             else
             {
                 Console.WriteLine("Error");
+            }*/
+            while (Pool != null)
+            {
+                Console.WriteLine("Error");
+                Thread.Sleep(10);
             }
+
+            Pool.Release();
         }
     
         public override void Release()
