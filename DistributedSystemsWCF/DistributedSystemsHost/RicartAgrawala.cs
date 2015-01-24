@@ -162,14 +162,6 @@ namespace DistributedSystems
             }
         }
     
-        public override void Done()
-        {
-            Console.WriteLine("DONE!!!");
-            Console.WriteLine("Final result: " + CurrentValue);
-
-            Reset();
-        }
-    
         public bool HasLock()
         {
             return IsLocked;

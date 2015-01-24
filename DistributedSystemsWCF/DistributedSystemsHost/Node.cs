@@ -89,8 +89,13 @@ namespace DistributedSystems
         public void Stop()
         {
             SignOff();
+            if (ChannelAPI != null && ChannelFactory != null && ChannelFactory.State == CommunicationState.Opened)
+            {
+                ChannelFactory.Close();
+            }
             RPCServiceHost.Close();
             Console.WriteLine("Node listening at {0} closed succesfully", ListenUri);
+            Console.WriteLine("Press any key to close...");
         }
         /// <summary>
         /// Return True if Join was succeesfull.
@@ -104,7 +109,7 @@ namespace DistributedSystems
                 IRPCOperations API = ConnectTo(IP);
                 if (API != null) // if succesful connection Join the entire network
                 {
-                    string[] nodes = API.join(Address);
+                    List<string> nodes = API.join(Address).Split(',').Where(x => x != "").ToList();
                     if (nodes != null && nodes.Count() > 0)
                         Network.AddRange(nodes);
                     // Nodes should have an ordering in the ring
@@ -253,6 +258,13 @@ namespace DistributedSystems
             // This is the only node with the token
             Console.WriteLine("Starting calculation...");
             DistrCalc.Start(StartingValue);
+        }
+
+        public void Test(int val)
+        {
+            IRPCOperations API = ConnectTo("172.16.1.104");
+            if (API != null)
+                API.test(val);
         }
     }
 }

@@ -120,7 +120,7 @@ namespace DistributedSystems
                         Console.WriteLine("Nodes connected:");
                         if (node.Network.Count > 1)
                         {
-                        foreach (string network in node.Network)
+                        foreach (string network in node.Network.Where(x => x != node.Address))
                             Console.WriteLine(network);
                         }
                         else
@@ -130,12 +130,18 @@ namespace DistributedSystems
                         node.SignOff();
                         Console.WriteLine("Signed off from the network.");
                         break;
+                    case "test":
+                        int ceva;
+                        int.TryParse(splits[1], out ceva);
+                        node.Test(ceva);
+                        break;
                     default:
                         Console.WriteLine("Unknown command\n");
                         break;
                 }
                 Console.WriteLine("----------------------------------------------------------");
             }
+            Console.ReadKey();
         }
 
         // --- Methods --------------------------------------------------
@@ -237,10 +243,13 @@ namespace DistributedSystems
             }
             DestroyPingers();
 
+            if (IPs.Contains(IP))
+                IPs.Remove(IP);
+
             Console.WriteLine("Found " + IPs.Count + " IPs."); 
             foreach(string i in IPs)
             {
-                Console.WriteLine("Join " + i + " ?   y/n");
+                Console.WriteLine("Join " + i + " (" + Dns.GetHostEntry(i).HostName + ") ?   y/n");
                 while (true)
                 {
                     string key = Console.ReadLine();

@@ -36,7 +36,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -49,6 +51,15 @@
     <Compile Include="App.cs" />
     <Compile Include="DistributedCalculation.cs" />
     <Compile Include="LamportClock.cs" />
+    <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcDataContractSerializer.cs" />
+    <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcEndpointBehavior.cs" />
+    <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcEndpointBehaviorSection.cs" />
+    <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcFormatException.cs" />
+    <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcMessage.cs" />
+    <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcOperationFormatter.cs" />
+    <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcOperationFormatterBehavior.cs" />
+    <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcOperationSelector.cs" />
+    <Compile Include="Microsoft.Samples.XmlRpc\XmlRpcProtocol.cs" />
     <Compile Include="MutualExclusionAlgorithm.cs" />
     <Compile Include="RicartAgrawala.cs" />
     <Compile Include="RPCOperations.cs" />
@@ -58,12 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Samples.XmlRpc\Microsoft.Samples.XmlRpc.csproj">
-      <Project>{d556d0b7-a193-4610-8dd3-17b715f2c868}</Project>
-      <Name>Microsoft.Samples.XmlRpc</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />

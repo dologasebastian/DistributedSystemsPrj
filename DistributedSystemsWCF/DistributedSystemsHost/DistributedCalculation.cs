@@ -39,10 +39,17 @@ namespace DistributedSystems
 
         // --- Public Abstract Methods ---------------------------------------
         public abstract void Run(int Value);
-        public abstract void Done();
         protected abstract void Reset();
         public abstract void Acquire(string ip = null);
         public abstract void Release();
+        protected void Done()
+        {
+            Console.WriteLine("----------------------------------------------------------");
+            Console.WriteLine("DONE!!!");
+            Console.WriteLine("Final result: " + CurrentValue);
+            Console.WriteLine("----------------------------------------------------------");
+            Reset();
+        }
         public void Start(int? StartValue = null)
         {
             if (HasStarted && StartValue != null)
@@ -58,7 +65,7 @@ namespace DistributedSystems
         {
             lock (ThisLock)
             {
-                Console.WriteLine("Performing Operation: " + op + "(" + CurrentValue + ", " + arg + ")");
+                Console.WriteLine("Performing: " + op + "(" + CurrentValue + ", " + arg + ")");
                 switch (op)
                 {
                     case MathOp.Add:
@@ -83,7 +90,7 @@ namespace DistributedSystems
         // --- Protected Methods ---------------------------------------------        
         protected void PropagateState(MathOp op, int val)
         {
-            Console.WriteLine("Sending: Operator(" + ((MathOp)Enum.Parse(typeof(MathOp), op.ToString())).ToString() + "), Argument(" + val + ")");
+            Console.WriteLine("Sending:    (" + ((MathOp)Enum.Parse(typeof(MathOp), op.ToString())).ToString() + ", " + val + ")");
             foreach (string ip in Node.Instance.Network)
             {
                 if (!ip.Equals(Node.Instance.Address))
