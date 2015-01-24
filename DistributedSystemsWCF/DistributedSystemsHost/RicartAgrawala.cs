@@ -149,7 +149,7 @@ namespace DistributedSystems
             {
                 Console.WriteLine("Error");
             }*/
-            while (Pool != null)
+            while (Pool == null)
             {
                 Console.WriteLine("Error");
                 Thread.Sleep(10);
