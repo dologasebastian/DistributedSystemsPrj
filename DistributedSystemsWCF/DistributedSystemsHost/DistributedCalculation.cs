@@ -50,6 +50,18 @@ namespace DistributedSystems
             Console.WriteLine("----------------------------------------------------------");
             Reset();
         }
+        protected void SleepCurrentThread(int? val = null)
+        {
+            try
+            {
+                int sleepInterval = val != null ? (int)val : 100 + (int)(random.NextDouble() * 200);
+                Thread.Sleep(sleepInterval);
+            }
+            catch (ThreadInterruptedException e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+        }
         public void Start(int? StartValue = null)
         {
             if (HasStarted && StartValue != null)
