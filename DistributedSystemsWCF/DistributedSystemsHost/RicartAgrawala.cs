@@ -41,45 +41,39 @@ namespace DistributedSystems
 
             while (true) // predefined period of seconds
             {
-                if (IsLocked)
+                NeedsToAccessCriticalSection = true;
+                RequestToAll();
+
+                if (!((DateTime.Now - StartTime).TotalSeconds > DURATION))
                 {
-                    Thread.Sleep(2);
+                    Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
+
+                    MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
+                    int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
+                    Update(op, arg);
+                    PropagateState(op, arg);
+
+                    NeedsToAccessCriticalSection = false;
+                    Release();
+
+                    // consider this as extra work it has to do that is not in the critical section
+                    SleepCurrentThread();
                 }
                 else
                 {
-                    NeedsToAccessCriticalSection = true;
-                    RequestToAll();
-
-                    if (!((DateTime.Now - StartTime).TotalSeconds > DURATION))
-                    {
-                        Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
-
-                        MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
-                        int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
-                        Update(op, arg);
-                        PropagateState(op, arg);
-
-                        NeedsToAccessCriticalSection = false;
-                        Release();
-
-                        // consider this as extra work it has to do that is not in the critical section
-                        SleepCurrentThread();
-                    }
-                    else
-                    {
-                        // we put sleep to make sure other nodes will have finished the calculation period
-                        // and will not start anything new. When we do Release() they will all just print the resut.
-                        SleepCurrentThread(200);
-                        Release();
-                        Done();
-                        break;
-                    }
+                    // we put sleep to make sure other nodes will have finished the calculation period
+                    // and will not start anything new. When we do Release() they will all just print the resut.
+                    SleepCurrentThread(200);
+                    Release();
+                    Done();
+                    break;
                 }
             }
         }
 
         public void RequestToAll()
         {
+            if (IsLocked) return;
             System.Diagnostics.Debug.Assert(!Acquiring);
             Acquiring = true;
             Clock.EventSend();
