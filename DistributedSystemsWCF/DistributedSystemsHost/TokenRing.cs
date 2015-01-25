@@ -47,44 +47,50 @@ namespace DistributedSystems
                     }
                     else
                         Console.WriteLine("Method: Release(). Problem trying to get the API");
-
                 }
 
             }
         }
+        public void ReleaseAll()
+        {
+            
+        }
         public override void Run(int Value)
         {
             CurrentValue = Value;
-            while (!((DateTime.Now - StartTime).TotalSeconds > 3.0)) // predefined period of 3 seconds
+            while (true) 
             {
-                Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
-
                 if (!HasToken)
                 {
                     NeedsToAccessCriticalSection = true;
                     Pool.WaitOne();
-                }
-                // We have the token, enter critical section
-                MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
-                int arg = (int)(random.NextDouble() * 100) + 1;
-                Update(op, arg);
-                PropagateState(op, arg);
-                // Done with critical section, release token
-                NeedsToAccessCriticalSection = false;
-                Release();                
+                }                
+                if (!((DateTime.Now - StartTime).TotalSeconds > 3.0)) // predefined period of 3 seconds
+                {
+                    Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
 
-                try
-                {
-                    int sleepInterval = 50 + (int)(random.NextDouble() * 200);
-                    //Console.WriteLine("Sleeping for " + sleepInterval);
-                    Thread.Sleep(sleepInterval);
+                    // We have the token, enter critical section
+                    MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
+                    int arg = (int)(random.NextDouble() * 100) + 1;
+                    Update(op, arg);
+                    PropagateState(op, arg);
+                    // Done with critical section, release token
+                    NeedsToAccessCriticalSection = false;
+                    Release();
+
+                    // consider this as extra work it has to do that is not in the critical section
+                    SleepCurrentThread();
                 }
-                catch (ThreadInterruptedException e)
+                else
                 {
-                    Console.WriteLine(e.StackTrace);
+                    // we put sleep to make sure other nodes will have finished the calculation period
+                    // and will not start anything new. When we do Release() they will all just print the resut.
+                    SleepCurrentThread(20);
+                    Release();
+                    Done();
+                    break;
                 }
             }
-            Done();
         }
         protected override void Reset()
         {
