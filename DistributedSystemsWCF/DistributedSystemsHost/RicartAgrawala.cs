@@ -41,39 +41,45 @@ namespace DistributedSystems
 
             while (true) // predefined period of seconds
             {
-                NeedsToAccessCriticalSection = true;
-                RequestToAll();
-
-                if (!((DateTime.Now - StartTime).TotalSeconds > DURATION))
+                if (IsLocked)
                 {
-                    Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
-
-                    MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
-                    int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
-                    Update(op, arg);
-                    PropagateState(op, arg);
-
-                    NeedsToAccessCriticalSection = false;
-                    Release();
-
-                    // consider this as extra work it has to do that is not in the critical section
-                    SleepCurrentThread();
+                    Thread.Sleep(2);
                 }
                 else
                 {
-                    // we put sleep to make sure other nodes will have finished the calculation period
-                    // and will not start anything new. When we do Release() they will all just print the resut.
-                    SleepCurrentThread(200);
-                    Release();
-                    Done();
-                    break;
+                    NeedsToAccessCriticalSection = true;
+                    RequestToAll();
+
+                    if (!((DateTime.Now - StartTime).TotalSeconds > DURATION))
+                    {
+                        Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
+
+                        MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
+                        int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
+                        Update(op, arg);
+                        PropagateState(op, arg);
+
+                        NeedsToAccessCriticalSection = false;
+                        Release();
+
+                        // consider this as extra work it has to do that is not in the critical section
+                        SleepCurrentThread();
+                    }
+                    else
+                    {
+                        // we put sleep to make sure other nodes will have finished the calculation period
+                        // and will not start anything new. When we do Release() they will all just print the resut.
+                        SleepCurrentThread(200);
+                        Release();
+                        Done();
+                        break;
+                    }
                 }
             }
         }
 
         public void RequestToAll()
         {
-            if (IsLocked) return;
             System.Diagnostics.Debug.Assert(!Acquiring);
             Acquiring = true;
             Clock.EventSend();
@@ -95,8 +101,11 @@ namespace DistributedSystems
             try
             {
                 // When all other nodes reply this will move forward
-                Latch.Wait();
-                /*while (!Pool.Equals(Node.Instance.Network.Count - 1))//(!Latch.Wait(3000))
+                if (Node.Instance.Network.Count > 1)
+                {
+                    Latch.Wait();
+                }
+                /*while (!Pool.Equals(Node.Instance.Network.Count - 1))
                 {
                     Thread.Sleep(2);
                     Console.WriteLine("Received replies from: " + String.Concat(Replied, ", "));
@@ -141,6 +150,9 @@ namespace DistributedSystems
             {
                 PendingReplies.Enqueue(ip);
             }
+
+            // TODO: Unlock the node after the first received request
+            IsLocked = false;
         }
 
         public override void Acquire(string ip)
