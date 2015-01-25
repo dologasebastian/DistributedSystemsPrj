@@ -87,18 +87,26 @@ namespace DistributedSystems
             {
                 if (ip != Node.Instance.Address)
                 {
-                    IRPCOperations API = Node.Instance.ConnectTo(ip);
-                    Console.WriteLine("RPC: Send request to " + ip + " (Clock: " + SentTimeStamp + ")...");
-                    SpinWait wait = new SpinWait();
                     while (true)
                     {
+                        IRPCOperations API = Node.Instance.ConnectTo(ip);
+                        Console.WriteLine("RPC: Send request to " + ip + " (Clock: " + SentTimeStamp + ")...");
+                        SpinWait wait = new SpinWait();
                         if (Node.Instance.ChannelFactory.State != System.ServiceModel.CommunicationState.Opened)
                         {
                             Console.WriteLine("CHANNEL IS " + Node.Instance.ChannelFactory.State.ToString());
                             wait.SpinOnce();
                             continue;
                         }
-                        API.raRequest(Node.Instance.Address, SentTimeStamp);
+                        try
+                        {
+                            API.raRequest(Node.Instance.Address, SentTimeStamp);
+                        }
+                        catch
+                        {
+                            Thread.Sleep(2);
+                            continue;
+                        }
                         break;
                     }
                 }
