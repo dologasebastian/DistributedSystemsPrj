@@ -283,11 +283,23 @@ namespace DistributedSystems
             {
                 // On receiving this message each node will initialize a DC object with initial value
                 // And they will all block until they receive the token to perform an operation
-                IRPCOperations API = ConnectTo(ip);
-                if (API != null)
-                    API.start_calculation(StartingValue, alg);
-                else
-                    Console.WriteLine("Method: StartCalculation(). Problem trying to get the API for the client: " + ip);
+                while (true)
+                {
+                    IRPCOperations API = ConnectTo(ip);
+                    if (API != null)
+                        try
+                        {
+                            API.start_calculation(StartingValue, alg);
+                        }
+                        catch
+                        {
+                            System.Threading.Thread.Sleep(2);
+                            continue;
+                        }
+                    else
+                        Console.WriteLine("Method: StartCalculation(). Problem trying to get the API for the client: " + ip);
+                    break;
+                }
             }
             System.Threading.Thread.Sleep(30);
             // This is the only node with the token
