@@ -114,14 +114,8 @@ namespace DistributedSystems
                         }                        
                         break;
                     case "show":
-                        string output = string.Empty;
-                        if (node.Network.Count > 1)
-                        {
-                            foreach (string network in node.Network.Where(x => x != node.Address))
-                                Console.WriteLine(network + network == node.Address ? " - Me" : "");
-                        }
-                        else
-                            Console.WriteLine("None");
+                        foreach (string network in node.Network)
+                            Console.WriteLine(network + (network == node.Address ? " - Me" : ""));
                         break;
                     case "signoff":
                         node.SignOff();
