@@ -141,6 +141,13 @@ namespace DistributedSystems
             try
             {
                 DistributedCalculation algo = Node.Instance.DistrCalc;
+                
+                // Do not process requests from other nodes before start_calculation is invoked
+                while (algo == null)
+                {
+                    Thread.Sleep(2);
+                }
+
                 if (algo.GetType() == typeof(RicartAgrawala))
                 {
                     Console.WriteLine("RPC: Process received request from " + ip + " (Clock: " + clock + ")...");

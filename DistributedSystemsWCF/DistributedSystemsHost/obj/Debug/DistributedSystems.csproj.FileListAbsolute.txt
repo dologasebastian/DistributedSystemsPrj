@@ -1,8 +1,6 @@
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe.config
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.pdb
-D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\Microsoft.Samples.XmlRpc.dll
-D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\Microsoft.Samples.XmlRpc.pdb
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.csprojResolveAssemblyReference.cache
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.exe
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.pdb
