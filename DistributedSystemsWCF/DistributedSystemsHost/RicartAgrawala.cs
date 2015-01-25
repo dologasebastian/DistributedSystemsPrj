@@ -91,9 +91,9 @@ namespace DistributedSystems
             try
             {
                 // When all other nodes reply this will move forward
-                while (Pool.Equals(Node.Instance.Network.Count - 1))//(!Latch.Wait(3000))
+                while (!Pool.Equals(Node.Instance.Network.Count - 1))//(!Latch.Wait(3000))
                 {
-                    Thread.Sleep(3000);
+                    Thread.Sleep(2);
                     Console.WriteLine("Received replies from: " + String.Concat(Replied, ", "));
                     Console.WriteLine("Current count: " + Pool.ToString());
                 }
