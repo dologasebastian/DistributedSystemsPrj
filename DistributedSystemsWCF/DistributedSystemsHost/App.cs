@@ -115,13 +115,10 @@ namespace DistributedSystems
                         break;
                     case "show":
                         string output = string.Empty;
-                        Console.WriteLine("Current node address:");
-                        Console.WriteLine(node.Address);
-                        Console.WriteLine("Nodes connected:");
                         if (node.Network.Count > 1)
                         {
-                        foreach (string network in node.Network.Where(x => x != node.Address))
-                            Console.WriteLine(network);
+                            foreach (string network in node.Network.Where(x => x != node.Address))
+                                Console.WriteLine(network + network == node.Address ? " - Me" : "");
                         }
                         else
                             Console.WriteLine("None");
