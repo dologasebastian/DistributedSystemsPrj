@@ -35,35 +35,40 @@ namespace DistributedSystems
             }
         }
 
-        public bool ShouldStop()
-        {
-            return (DateTime.Now - StartTime).TotalSeconds > DURATION;
-        }
-
         public override void Run(int Value)
         {
             CurrentValue = Value;
 
-            while (!ShouldStop()) // predefined period of seconds
+            while (true) // predefined period of seconds
             {
-                Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
-
                 NeedsToAccessCriticalSection = true;
                 RequestToAll();
-    
-                MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
-                int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
-                Update(op, arg);
-                PropagateState(op, arg);
-    
-                NeedsToAccessCriticalSection = false;
-                Release();
 
-                // consider this as extra work it has to do that is not in the critical section
-                SleepCurrentThread();
+                if (!((DateTime.Now - StartTime).TotalSeconds > DURATION))
+                {
+                    Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
+
+                    MathOp op = (MathOp)Enum.GetValues(typeof(MathOp)).GetValue(random.Next(Enum.GetValues(typeof(MathOp)).Length));
+                    int arg = (int)(random.NextDouble() * 100) + 1; // never divide by zero
+                    Update(op, arg);
+                    PropagateState(op, arg);
+
+                    NeedsToAccessCriticalSection = false;
+                    Release();
+
+                    // consider this as extra work it has to do that is not in the critical section
+                    SleepCurrentThread();
+                }
+                else
+                {
+                    SleepCurrentThread(200);
+                    Release();
+                    Done();
+                    break;
+                }
             }
             //Finished = true;
-            Done();
+            //Done();
         }
 
         public void RequestToAll()
