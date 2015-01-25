@@ -41,7 +41,7 @@ namespace DistributedSystems
                 // initialize local variables
                 Address = IP;
                 Network = new List<string>() { Address };
-                DistrCalc = new TokenRing();
+                DistrCalc = null;
 
                 // Create the server with the desired IP and Port.
                 Uri baseAddress = new UriBuilder(Uri.UriSchemeHttp, System.Net.Dns.GetHostName(), Port, "/").Uri;

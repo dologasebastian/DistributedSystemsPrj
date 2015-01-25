@@ -119,6 +119,12 @@ namespace DistributedSystems
 
         public void MessageReceived(string ip, int k)
         {
+            // Do not process requests from other nodes before start_calculation is invoked
+            while (Node.Instance.DistrCalc == null)
+            {
+                Thread.Sleep(2);
+            }
+
             Clock.EventReceive(new Tuple<int, string>(k, ip));
     
             // If not interested in critical section reply with 'OK'
