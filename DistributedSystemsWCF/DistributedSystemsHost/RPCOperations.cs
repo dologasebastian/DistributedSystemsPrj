@@ -143,7 +143,7 @@ namespace DistributedSystems
                 DistributedCalculation algo = Node.Instance.DistrCalc;
                 if (algo.GetType() == typeof(RicartAgrawala))
                 {
-                    Console.WriteLine("Process received request from " + ip + "...");
+                    Console.WriteLine("Process received request from " + ip + " (Clock: " + clock + ")...");
                     ((RicartAgrawala)algo).MessageReceived(ip, clock);
                 }
                 else
