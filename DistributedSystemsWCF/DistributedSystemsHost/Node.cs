@@ -211,12 +211,12 @@ namespace DistributedSystems
                         ChannelFactory.Abort();
                     else
                         ChannelFactory.Close();
-                    ChannelAPI = null;
-                }
-                System.Threading.SpinWait wait = new System.Threading.SpinWait();
-                while (ChannelFactory.State != CommunicationState.Closed)
-                {
-                    wait.SpinOnce();
+
+                    System.Threading.SpinWait wait = new System.Threading.SpinWait();
+                    while (ChannelFactory.State != CommunicationState.Closed)
+                    {
+                        wait.SpinOnce();
+                    }
                 }
 
                 ChannelFactory = new ChannelFactory<IRPCOperations>(
