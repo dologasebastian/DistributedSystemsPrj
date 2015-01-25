@@ -205,8 +205,8 @@ namespace DistributedSystems
                 if (ChannelAPI != null && ChannelFactory != null && ChannelFactory.State == CommunicationState.Opened)
                 {
                     // if connecting to same Node, skip the next steps
-                    if (ChannelFactory.Endpoint.Address.Uri.AbsoluteUri == NodeAddress.AbsoluteUri)
-                        return ChannelAPI;  // send the last API
+                    //if (ChannelFactory.Endpoint.Address.Uri.AbsoluteUri == NodeAddress.AbsoluteUri)
+                    //    return ChannelAPI;  // send the last API
                     ChannelFactory.Close();
                     ChannelAPI = null;
                 }
