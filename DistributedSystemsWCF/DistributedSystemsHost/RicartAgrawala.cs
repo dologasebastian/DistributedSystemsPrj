@@ -24,6 +24,17 @@ namespace DistributedSystems
             Clock = new LamportClock(Node.Instance.Address);
         }
 
+        public RicartAgrawala(bool initiallyLocked)
+            : base(false)
+        {
+            Clock = new LamportClock(Node.Instance.Address);
+            IsLocked = initiallyLocked;
+            if (initiallyLocked)
+            {
+                Pool = new Semaphore(0, 1);
+            }
+        }
+
         public bool ShouldStop()
         {
             return (DateTime.Now - StartTime).TotalSeconds > DURATION;
@@ -129,25 +140,21 @@ namespace DistributedSystems
 
         public override void Acquire(string ip)
         {
-            System.Diagnostics.Debug.Assert(Acquiring);
+            if (!Acquiring)
+            {
+                return;
+            }
             Clock.EventLocal();
             Replied.Add(ip);
 
-            /*if (Pool != null)
+            if (Pool != null)
             {
                 Pool.Release();
             }
             else
             {
                 Console.WriteLine("Error");
-            }*/
-            while (Pool == null)
-            {
-                Console.WriteLine("Error");
-                Thread.Sleep(10);
             }
-
-            Pool.Release();
         }
     
         public override void Release()
@@ -171,6 +178,7 @@ namespace DistributedSystems
             CurrentValue = 0;
             NeedsToAccessCriticalSection = false;
             this.HasToken = false;
+            if (Pool != null) Pool.Dispose();
             Pool = new Semaphore(0, 1);
             StartTime = DateTime.Now;
             HasStarted = false;
