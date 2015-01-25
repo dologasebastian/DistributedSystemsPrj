@@ -107,11 +107,20 @@ namespace DistributedSystems
             try
             {
                 IRPCOperations API = ConnectTo(IP);
-                if (API != null) // if succesful connection Join the entire network
+                if (API != null && !Network.Contains(IP)) // if succesful connection Join the entire network
                 {
                     string n = API.join(Address);
-                    if (!string.IsNullOrEmpty(n))
+                    if (!string.IsNullOrEmpty(n))// a node that is already in the network tried to join. Skip it
                     {
+                        foreach(string ipOtherNodes in Network.Where(x => x != IP))
+                        {
+                            API = ConnectTo(ipOtherNodes);
+                            if (API != null) // if succesful connection Join the entire network
+                            {
+                                API.join(IP);
+                            }
+                        }
+
                         List<string> nodes = n.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToList();
                         if (nodes != null && nodes.Count() > 0)
                             Network.AddRange(nodes);
