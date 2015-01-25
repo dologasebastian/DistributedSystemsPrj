@@ -59,7 +59,7 @@ namespace DistributedSystems
         /// <param name="receivedLC">Received Lamport clock state</param>
         /// <returns></returns>
         [OperationContract(Action = "pdc.ra_request")]
-        int raRequest(string ip, long clock);
+        int raRequest(string ip, uint clock);
         [OperationContract(Action = "pdc.test")]
         int test(int val);
     }
@@ -136,7 +136,7 @@ namespace DistributedSystems
 
             return 0;
         }
-        public int raRequest(string ip, long clock)
+        public int raRequest(string ip, uint clock)
         {
             try
             {

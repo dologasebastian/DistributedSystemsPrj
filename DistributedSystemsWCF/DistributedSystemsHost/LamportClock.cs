@@ -14,7 +14,7 @@ namespace DistributedSystems
     class LamportClock
     {
         private readonly string Ip;
-        private long Counter = 0;
+        private uint Counter = 0;
         private Object ThisLock = new Object();
 
         public LamportClock(string ip)
@@ -22,7 +22,7 @@ namespace DistributedSystems
             this.Ip = ip;
         }
 
-        public LamportClock(long counter, string ip)
+        public LamportClock(uint counter, string ip)
         {
             this.Counter = counter;
             this.Ip = ip;
@@ -32,7 +32,7 @@ namespace DistributedSystems
         /// Update the clock in case of a "Local" event.
         /// </summary>
         /// <returns>Tuple containing the clock value after performing the event and the computer ID</returns>
-        public Tuple<long, string> EventLocal()
+        public Tuple<uint, string> EventLocal()
         {
             IncCounter();
            
@@ -43,7 +43,7 @@ namespace DistributedSystems
         /// Update the clock in case of a "Send" event.
         /// </summary>
         /// <returns>Tuple containing the clock value after performing the event and the computer ID</returns>
-        public Tuple<long, string> EventSend()
+        public Tuple<uint, string> EventSend()
         {
             IncCounter();
 
@@ -55,9 +55,9 @@ namespace DistributedSystems
         /// </summary>
         /// <param name="receivedLC">Tuple containing the received clock value and the computer ID of the sender</param>
         /// <returns>Tuple containing the clock value after performing the event and the computer ID</returns>
-        public Tuple<long, string> EventReceive(Tuple<long, string> receivedLC)
+        public Tuple<uint, string> EventReceive(Tuple<uint, string> receivedLC)
         {
-            long rCounter = receivedLC.Item1;
+            uint rCounter = receivedLC.Item1;
 
             if (rCounter > Counter)
             {
@@ -84,7 +84,7 @@ namespace DistributedSystems
         /// </summary>
         /// <param name="receivedLC">Tuple containing the other clock value: (Counter, IP)</param>
         /// <returns>1 if gt, 0 if eq, -1 if lt</returns>
-        public int Compare(Tuple<long, string> receivedLC)
+        public int Compare(Tuple<uint, string> receivedLC)
         {
 
             if (receivedLC.Item1 == this.Counter)
@@ -111,9 +111,9 @@ namespace DistributedSystems
             return Counter.CompareTo(receivedLC.Item1);
         }
 
-        public Tuple<long, string> ToTuple()
+        public Tuple<uint, string> ToTuple()
         {
-            return new Tuple<long, string>(Counter, Ip);
+            return new Tuple<uint, string>(Counter, Ip);
         }
     }
 }
