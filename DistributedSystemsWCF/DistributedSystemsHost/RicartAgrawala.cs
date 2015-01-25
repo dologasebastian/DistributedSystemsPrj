@@ -12,7 +12,7 @@ namespace DistributedSystems
         // --- Private Properties ----------------------------------------
         private LamportClock Clock;
         private bool Acquiring = false;
-        private uint SentTimeStamp;
+        private int SentTimeStamp;
         private bool IsLocked = false;
         private CountdownLatch Latch;
         private HashSet<string> Replied = new HashSet<string>();
@@ -117,9 +117,9 @@ namespace DistributedSystems
         }
 
 
-        public void MessageReceived(string ip, uint k)
+        public void MessageReceived(string ip, int k)
         {
-            Clock.EventReceive(new Tuple<uint, string>(k, ip));
+            Clock.EventReceive(new Tuple<int, string>(k, ip));
     
             // If not interested in critical section reply with 'OK'
             if (!NeedsToAccessCriticalSection)
@@ -131,7 +131,7 @@ namespace DistributedSystems
             else if (Acquiring)
             {
                 // I win (the result of this comparison should be the same on the sender as well
-                if (new LamportClock(SentTimeStamp, Node.Instance.Address).Compare(new Tuple<uint, string>(k, ip)) < 0)
+                if (new LamportClock(SentTimeStamp, Node.Instance.Address).Compare(new Tuple<int, string>(k, ip)) < 0)
                 {
                     PendingReplies.Enqueue(ip);
                 // I lose
