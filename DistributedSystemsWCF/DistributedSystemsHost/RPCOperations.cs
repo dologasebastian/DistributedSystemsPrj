@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DistributedSystems
 {
-    [ServiceContract]
+    [ServiceContract(ProtectionLevel=System.Net.Security.ProtectionLevel.None)]
     public interface IRPCOperations
     {
         /// <summary>
@@ -18,20 +18,20 @@ namespace DistributedSystems
         /// </summary>
         /// <param name="ip"></param>
         /// <returns></returns>
-        [OperationContract]
-        string[] join(string ip);
+        [OperationContract(Action="pdc.join", Name="pdc.join",IsOneWay=false)]
+        string join(string ip);
         /// <summary>
         /// Starts the calculation in this specific Node with the passed value.
         /// </summary>
         /// <param name="val">The value to start/continue the computation</param>
         /// <returns></returns>
-        [OperationContract]
+        [OperationContract(Action = "pdc.start_calculation")]
         int start_calculation(int val, string alg);
         /// <summary>
         /// Informs the node that it has the token
         /// </summary>
         /// <returns></returns>
-        [OperationContract]
+        [OperationContract(Action = "pdc.take_token")]
         int take_token();
         /// <summary>
         /// Propagate the state
@@ -39,39 +39,44 @@ namespace DistributedSystems
         /// <param name="Operation">Paramerter of type MathOp</param>
         /// <param name="Value"></param>
         /// <returns></returns>
-        [OperationContract]
+        [OperationContract(Action = "pdc.propagate_state")]
         int propagate_state(int op, int val);
         /// <summary>
         /// Called by a node when it wants to leave the network.
         /// </summary>
         /// <param name="ip">Sends its IP so the other nodes know which one left.</param>
-        [OperationContract]
+        [OperationContract(Action = "pdc.sign_off")]
         int sign_off(string ip);
         /// <summary>
         /// Sends ok reply
         /// </summary>
         /// <returns></returns>
-        [OperationContract]
+        [OperationContract(Action = "pdc.ra_reply")]
         int raReply(string ip);
         /// <summary>
         /// Informs all the other nodes that this nodes wants access to the resource (Used for Recard & Agrawala)
         /// </summary>
         /// <param name="receivedLC">Received Lamport clock state</param>
         /// <returns></returns>
-        [OperationContract]
+        [OperationContract(Action = "pdc.ra_request")]
         int raRequest(string ip, long clock);
+        [OperationContract(Action = "pdc.test")]
+        int test(int val);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class RPCOperations : IRPCOperations
     {
-        public string[] join(string ip)
+        public string join(string ip)
         {
-            List<string> Network = new List<string>(Node.Instance.Network);
+            string Network = "";
+            foreach (string i in Node.Instance.Network)
+                Network += i + ",";
             Node.Instance.Network.Add(ip); // Add requesting node to this network
             Console.WriteLine(ip + " joined the network.");
+            
             // return an Array of all connected IPs to this Node, except the one that called Join.
-            return Network.ToArray();
+            return Network;
         }
         public int start_calculation(int val, string alg)
         {            
@@ -141,6 +146,11 @@ namespace DistributedSystems
             }
 
             return 0;
+        }
+        public int test(int val)
+        {
+            Console.WriteLine("Received: " + val);
+            return 1;
         }
     }
 }

@@ -6,3 +6,9 @@ D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\D
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.csprojResolveAssemblyReference.cache
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.exe
 D:\Uni-Bonn\Semester 3\PDS\Project\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.pdb
+C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe.config
+C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.exe
+C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.pdb
+C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\obj\Debug\DistributedSystems.csprojResolveAssemblyReference.cache
+C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.exe
+C:\Users\sebastian\Documents\GitHub\DistributedSystemsPrj\DistributedSystemsWCF\DistributedSystemsHost\bin\Debug\DistributedSystems.pdb
