@@ -89,6 +89,7 @@ namespace DistributedSystems
                 {
                     IRPCOperations API = Node.Instance.ConnectTo(ip);
                     API.raRequest(Node.Instance.Address, SentTimeStamp);
+                    Console.WriteLine("Send request to " + ip + " (Clock: " + SentTimeStamp + ")...");
                 }
             }
     
