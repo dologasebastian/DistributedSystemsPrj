@@ -281,7 +281,6 @@ namespace DistributedSystems
                 else
                     Console.WriteLine("Method: StartCalculation(). Problem trying to get the API for the client: " + ip);
             }
-            System.Threading.Thread.Sleep(30);
             // This is the only node with the token
             Console.WriteLine("Starting calculation...");
             DistrCalc.Start(StartingValue);
