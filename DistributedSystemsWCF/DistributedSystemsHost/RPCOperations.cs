@@ -79,7 +79,12 @@ namespace DistributedSystems
                 foreach (string i in Node.Instance.Network.Where(x => x != ip))
                 {
                     Network += i + ",";
-                }                
+                }
+                Network
+                            .OrderBy(x => int.Parse(x.Split('.')[0]))
+                            .ThenBy(x => int.Parse(x.Split('.')[1]))
+                            .ThenBy(x => int.Parse(x.Split('.')[2]))
+                            .ThenBy(x => int.Parse(x.Split('.')[3])).ToList();
             }            
             // return an Array of all connected IPs to this Node, except the one that called Join.
             return Network;

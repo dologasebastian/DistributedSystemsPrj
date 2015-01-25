@@ -139,10 +139,11 @@ namespace DistributedSystems
                         // Nodes should have an ordering in the ring
                         // They are ordered by their IP addresses
                         // TODO: Shouldn't it be "Network = Network.Order....ToList();"?
-                        Network.OrderBy(x => int.Parse(x.Split('.').First()))
+                        Network
+                            .OrderBy(x => int.Parse(x.Split('.')[0]))
                             .ThenBy(x => int.Parse(x.Split('.')[1]))
                             .ThenBy(x => int.Parse(x.Split('.')[2]))
-                            .ThenBy(x => int.Parse(x.Split('.').Last())).ToList();
+                            .ThenBy(x => int.Parse(x.Split('.')[3])).ToList();
                         if (System.Diagnostics.Debugger.IsAttached) Console.WriteLine("Joined network successfully.");
                     }
                     return true;
