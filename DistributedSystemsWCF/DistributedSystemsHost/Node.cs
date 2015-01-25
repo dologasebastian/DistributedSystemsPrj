@@ -125,14 +125,17 @@ namespace DistributedSystems
                         {
                             foreach (string ipReceived in nodes.Where(x => x != IP))
                             {
-                                API = ConnectTo(ipReceived);
-                                if (API != null) // if succesful connection Join the entire network
-                                    API.join(Address);
+                                if (!Network.Contains(ipReceived))
+                                {
+                                    API = ConnectTo(ipReceived);
+                                    if (API != null) // if succesful connection Join the entire network
+                                        API.join(Address);
+                                }
                             }
                             Network.AddRange(nodes);
                         }
 
-                        Node.Instance.Network = new HashSet<string>(Node.Instance.Network).ToList();
+                        //Node.Instance.Network = new HashSet<string>(Node.Instance.Network).ToList();
                         // Nodes should have an ordering in the ring
                         // They are ordered by their IP addresses
                         // TODO: Shouldn't it be "Network = Network.Order....ToList();"?
