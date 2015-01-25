@@ -116,6 +116,8 @@ namespace DistributedSystems
                         if (nodes != null && nodes.Count() > 0)
                             Network.AddRange(nodes);
 
+                        Network = new HashSet<string>(Network).ToList();
+
                         foreach(string ipn in Network.Where(x => x != IP))
                         {
                             API = ConnectTo(IP);
