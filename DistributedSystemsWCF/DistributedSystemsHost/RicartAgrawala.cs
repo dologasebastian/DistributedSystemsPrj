@@ -9,7 +9,7 @@ namespace DistributedSystems
 {
     public class RicartAgrawala : DistributedCalculation
     {
-        public static readonly int DURATION = 20;
+        public static readonly int DURATION = 3;
 
         // --- Private Properties ----------------------------------------
         private LamportClock Clock;

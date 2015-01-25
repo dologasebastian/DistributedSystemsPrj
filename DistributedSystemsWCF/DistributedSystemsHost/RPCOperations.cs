@@ -72,8 +72,11 @@ namespace DistributedSystems
             string Network = "";
             foreach (string i in Node.Instance.Network)
                 Network += i + ",";
-            Node.Instance.Network.Add(ip); // Add requesting node to this network
-            Console.WriteLine(ip + " joined the network.");
+            if (!Node.Instance.Network.Contains(ip))
+            {
+                Node.Instance.Network.Add(ip); // Add requesting node to this network
+                Console.WriteLine(ip + " joined the network.");
+            }
             
             // return an Array of all connected IPs to this Node, except the one that called Join.
             return Network;

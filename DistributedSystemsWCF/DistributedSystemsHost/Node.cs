@@ -109,17 +109,31 @@ namespace DistributedSystems
                 IRPCOperations API = ConnectTo(IP);
                 if (API != null) // if succesful connection Join the entire network
                 {
-                    List<string> nodes = API.join(Address).Split(',').Where(x => x != "").ToList();
-                    if (nodes != null && nodes.Count() > 0)
-                        Network.AddRange(nodes);
-                    // Nodes should have an ordering in the ring
-                    // They are ordered by their IP addresses
-                    // TODO: Shouldn't it be "Network = Network.Order....ToList();"?
-                    Network.OrderBy(x => int.Parse(x.Split('.').First()))
-                        .ThenBy(x => int.Parse(x.Split('.')[1]))
-                        .ThenBy(x => int.Parse(x.Split('.')[2]))
-                        .ThenBy(x => int.Parse(x.Split('.').Last())).ToList();
-                    if (System.Diagnostics.Debugger.IsAttached) Console.WriteLine("Joined network successfully.");
+                    string n = API.join(Address);
+                    if (n != "")
+                    {
+                        List<string> nodes = n.Split(',').Where(x => x != "").ToList();
+                        if (nodes != null && nodes.Count() > 0)
+                            Network.AddRange(nodes);
+
+                        foreach(string ipn in Network.Where(x => x != IP))
+                        {
+                            API = ConnectTo(IP);
+                            if (API != null) // if succesful connection Join the entire network
+                            {
+                                API.join(ipn);
+                            }
+                        }
+
+                        // Nodes should have an ordering in the ring
+                        // They are ordered by their IP addresses
+                        // TODO: Shouldn't it be "Network = Network.Order....ToList();"?
+                        Network.OrderBy(x => int.Parse(x.Split('.').First()))
+                            .ThenBy(x => int.Parse(x.Split('.')[1]))
+                            .ThenBy(x => int.Parse(x.Split('.')[2]))
+                            .ThenBy(x => int.Parse(x.Split('.').Last())).ToList();
+                        if (System.Diagnostics.Debugger.IsAttached) Console.WriteLine("Joined network successfully.");
+                    }
                     return true;
                 }
                 if (System.Diagnostics.Debugger.IsAttached) Console.WriteLine("A non-fatal problem occured while trying to join.");
