@@ -88,8 +88,8 @@ namespace DistributedSystems
                 if (ip != Node.Instance.Address)
                 {
                     IRPCOperations API = Node.Instance.ConnectTo(ip);
+                    Console.WriteLine("RPC: Send request to " + ip + " (Clock: " + SentTimeStamp + ")...");
                     API.raRequest(Node.Instance.Address, SentTimeStamp);
-                    Console.WriteLine("Send request to " + ip + " (Clock: " + SentTimeStamp + ")...");
                 }
             }
     
@@ -124,8 +124,8 @@ namespace DistributedSystems
             // If not interested in critical section reply with 'OK'
             if (!NeedsToAccessCriticalSection)
             {
+                Console.WriteLine("RPC: Sending OK reply to " + ip + "...");
                 Node.Instance.ConnectTo(ip).raReply(Node.Instance.Address);
-                Console.WriteLine("Sending OK reply to " + ip + "...");
             // Wants critical section but doesn't have the lock yet
             }
             else if (Acquiring)
@@ -138,8 +138,8 @@ namespace DistributedSystems
                 }
                 else
                 {
+                    Console.WriteLine("RPC: Sending OK reply to " + ip + "...");
                     Node.Instance.ConnectTo(ip).raReply(Node.Instance.Address);
-                    Console.WriteLine("Sending OK reply to " + ip + "...");
                 }
             // In the resource
             }

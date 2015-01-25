@@ -10,7 +10,7 @@ namespace DistributedSystems
     public abstract class DistributedCalculation : MutualExclusionAlgorithm
     {
         // --- Protected Properties -------------------------------------------
-        protected static readonly int DURATION = 3;
+        protected static readonly int DURATION = 30000;
         protected bool HasStarted = false;
         protected static Random random = new Random();
         protected Object ThisLock = new Object();
