@@ -121,9 +121,9 @@ namespace DistributedSystems
 
     public enum MathOp
     {
-        Add = 1, 
-        Sub = 2, 
-        Mul = 3, 
-        Div = 4
+        Add = 0, 
+        Sub = 1, 
+        Mul = 2, 
+        Div = 3
     }
 }

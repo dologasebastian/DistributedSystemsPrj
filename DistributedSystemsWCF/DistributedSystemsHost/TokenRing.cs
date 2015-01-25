@@ -40,7 +40,7 @@ namespace DistributedSystems
                     IRPCOperations API = Node.Instance.ConnectTo(IP);
                     if (API != null && !string.IsNullOrEmpty(IP))
                     {
-                        API.take_token();
+                        API.take_token(0);
                         // if there are no other Nodes that want take the Token
                         // we wait a little so that we don't try to pass the token very fast
                         Thread.Sleep(50);
