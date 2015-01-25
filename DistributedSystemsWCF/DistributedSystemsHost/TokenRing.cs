@@ -64,8 +64,8 @@ namespace DistributedSystems
                 {
                     NeedsToAccessCriticalSection = true;
                     Pool.WaitOne();
-                }                
-                if (!((DateTime.Now - StartTime).TotalSeconds > 3.0)) // predefined period of 3 seconds
+                }
+                if (!((DateTime.Now - StartTime).TotalSeconds > DURATION)) // predefined period of seconds
                 {
                     Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
 

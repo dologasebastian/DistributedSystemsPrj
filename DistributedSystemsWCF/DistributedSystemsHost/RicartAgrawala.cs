@@ -9,8 +9,6 @@ namespace DistributedSystems
 {
     public class RicartAgrawala : DistributedCalculation
     {
-        public static readonly int DURATION = 3;
-
         // --- Private Properties ----------------------------------------
         private LamportClock Clock;
         private bool Acquiring = false;
@@ -35,8 +33,10 @@ namespace DistributedSystems
         {
             CurrentValue = Value;
 
-            while (!ShouldStop())
+            while (!ShouldStop()) // predefined period of seconds
             {
+                Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
+
                 NeedsToAccessCriticalSection = true;
                 RequestToAll();
     
@@ -47,17 +47,9 @@ namespace DistributedSystems
     
                 NeedsToAccessCriticalSection = false;
                 Release();
-    
-                int sleepInterval = 500 + random.Next(500);
-                try
-                {
-                    Console.WriteLine("Sleeping for " + sleepInterval);
-                    Thread.Sleep(sleepInterval);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.StackTrace);
-                }
+
+                // consider this as extra work it has to do that is not in the critical section
+                SleepCurrentThread();
             }
             //Finished = true;
             Done();
