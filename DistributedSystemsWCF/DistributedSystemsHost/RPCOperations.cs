@@ -93,7 +93,6 @@ namespace DistributedSystems
         {            
             Node.Instance.SelectAlgorithm(alg);
             Console.WriteLine("Starting distributed calculation with value: " + val);
-            System.Threading.Thread.Sleep(100);
             Node.Instance.DistrCalc.Start(val);
             
             return 0;
