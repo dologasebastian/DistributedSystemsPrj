@@ -130,8 +130,9 @@ namespace DistributedSystems
                                     API.join(Address);
                             }
                             Network.AddRange(nodes);
-                        }                        
-                        
+                        }
+
+                        Node.Instance.Network = new HashSet<string>(Node.Instance.Network).ToList();
                         // Nodes should have an ordering in the ring
                         // They are ordered by their IP addresses
                         // TODO: Shouldn't it be "Network = Network.Order....ToList();"?
