@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DistributedSystems
 {
-    [ServiceContract(ProtectionLevel=System.Net.Security.ProtectionLevel.None)]
+    [ServiceContract]
     public interface IRPCOperations
     {
         /// <summary>
@@ -18,7 +18,7 @@ namespace DistributedSystems
         /// </summary>
         /// <param name="ip"></param>
         /// <returns></returns>
-        [OperationContract(Action="pdc.join", Name="pdc.join",IsOneWay=false)]
+        [OperationContract(Action="pdc.join")]
         string join(string ip);
         /// <summary>
         /// Starts the calculation in this specific Node with the passed value.
