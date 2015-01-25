@@ -125,6 +125,7 @@ namespace DistributedSystems
             if (!NeedsToAccessCriticalSection)
             {
                 Node.Instance.ConnectTo(ip).raReply(Node.Instance.Address);
+                Console.WriteLine("Sending OK reply to " + ip + "...");
             // Wants critical section but doesn't have the lock yet
             }
             else if (Acquiring)
@@ -138,6 +139,7 @@ namespace DistributedSystems
                 else
                 {
                     Node.Instance.ConnectTo(ip).raReply(Node.Instance.Address);
+                    Console.WriteLine("Sending OK reply to " + ip + "...");
                 }
             // In the resource
             }
