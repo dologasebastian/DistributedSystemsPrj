@@ -205,10 +205,18 @@ namespace DistributedSystems
                 if (ChannelAPI != null && ChannelFactory != null && ChannelFactory.State == CommunicationState.Opened)
                 {
                     // if connecting to same Node, skip the next steps
-                    //if (ChannelFactory.Endpoint.Address.Uri.AbsoluteUri == NodeAddress.AbsoluteUri)
-                    //    return ChannelAPI;  // send the last API
-                    ChannelFactory.Close();
+                    if (ChannelFactory.State != CommunicationState.Faulted && ChannelFactory.Endpoint.Address.Uri.AbsoluteUri == NodeAddress.AbsoluteUri)
+                        return ChannelAPI;  // send the last API
+                    if (ChannelFactory.State == CommunicationState.Faulted)
+                        ChannelFactory.Abort();
+                    else
+                        ChannelFactory.Close();
                     ChannelAPI = null;
+                }
+                System.Threading.SpinWait wait = new System.Threading.SpinWait();
+                while (ChannelFactory.State != CommunicationState.Closed)
+                {
+                    wait.SpinOnce();
                 }
 
                 ChannelFactory = new ChannelFactory<IRPCOperations>(
