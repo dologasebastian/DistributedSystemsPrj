@@ -80,7 +80,7 @@ namespace DistributedSystems
                 {
                     Network += i + ",";
                 }
-                Network
+                Node.Instance.Network = Node.Instance.Network
                             .OrderBy(x => int.Parse(x.Split('.')[0]))
                             .ThenBy(x => int.Parse(x.Split('.')[1]))
                             .ThenBy(x => int.Parse(x.Split('.')[2]))
