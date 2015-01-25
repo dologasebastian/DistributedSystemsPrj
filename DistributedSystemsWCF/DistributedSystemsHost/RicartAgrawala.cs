@@ -109,7 +109,7 @@ namespace DistributedSystems
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("RicartAgrawala::RequestToAll:\n" + e.StackTrace);
             }
             Acquiring = false;
             IsLocked = true;

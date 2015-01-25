@@ -60,7 +60,7 @@ namespace DistributedSystems
             }
             catch (ThreadInterruptedException e)
             {
-                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("DistributedCalculation::SleepCurrentThread:\n" + e.StackTrace);
             }
         }
         public void Start(int? StartValue = null)
