@@ -23,8 +23,8 @@ namespace DistributedSystems
         // --- Private Properties ----------------------------------------
         private ServiceHost RPCServiceHost = null;                    // The host class
         private Uri ListenUri = null;                                 // The URI where the server listens to incoming connetions
-        public ChannelFactory<IRPCOperations> ChannelFactory = null; // The API/Connection to another Node. Needed in order to open/close connections
-        private IRPCOperations ChannelAPI = null;                     // The API for the client
+        private List<ChannelFactory<IRPCOperations>> ChannelFactory = null; // The API/Connection to another Node. Needed in order to open/close connections
+        private List<Tuple<string, IRPCOperations>> ChannelAPI = null;                     // The API for the client
 
         // --- Public Properties -----------------------------------------
         public static Node Instance = null;                           // Singleton Class
@@ -42,6 +42,8 @@ namespace DistributedSystems
                 Address = IP;
                 Network = new List<string>() { Address };
                 DistrCalc = null;
+                ChannelFactory = new List<ChannelFactory<IRPCOperations>>();
+                ChannelAPI = new List<Tuple<string, IRPCOperations>>();
 
                 // Create the server with the desired IP and Port.
                 Uri baseAddress = new UriBuilder(Uri.UriSchemeHttp, System.Net.Dns.GetHostName(), Port, "/").Uri;
@@ -89,9 +91,13 @@ namespace DistributedSystems
         public void Stop()
         {
             SignOff();
-            if (ChannelAPI != null && ChannelFactory != null && ChannelFactory.State == CommunicationState.Opened)
+            if (ChannelFactory.Count > 0)
             {
-                ChannelFactory.Close();
+                foreach (ChannelFactory<IRPCOperations> Factory in ChannelFactory)
+                    if (Factory.State == CommunicationState.Opened)
+                        Factory.Close();
+                    else if (Factory.State == CommunicationState.Faulted)
+                        Factory.Abort();
             }
             RPCServiceHost.Close();
             Console.WriteLine("Node listening at {0} closed succesfully", ListenUri);
@@ -113,7 +119,7 @@ namespace DistributedSystems
                     Console.WriteLine("Sign off first, then join.");
                     return false;
                 }
-
+                CreateClient(IP);
                 IRPCOperations API = ConnectTo(IP);
                 if (API != null && !Network.Contains(IP)) // if succesful connection Join the entire network
                 {
@@ -127,6 +133,7 @@ namespace DistributedSystems
                             {
                                 if (!Network.Contains(ipReceived))
                                 {
+                                    CreateClient(ipReceived);
                                     API = ConnectTo(ipReceived);
                                     if (API != null) // if succesful connection Join the entire network
                                         API.join(Address);
@@ -189,48 +196,29 @@ namespace DistributedSystems
                 }
             }
         }
-        /// <summary>
-        /// Connects to a Node using a specific IP.
-        /// The new API to the new Node can be found in the list APIs if connection succesful.
-        /// </summary>
-        /// <param name="IP">The IP to which you want to connect to</param>
-        /// <returns>True if connection could be made, False if not.</returns>
-        public IRPCOperations ConnectTo(string IP)
+        public void CreateClient(string IP)
         {
             try
             {
+                foreach (Tuple<string, IRPCOperations> Client in ChannelAPI)
+                    if (Client.Item1 == IP)
+                        return;
+
                 Uri NodeAddress = new UriBuilder(Uri.UriSchemeHttp, IP, Port, "/").Uri;
 
-                // close the last connection before creating a new one
-                if (ChannelAPI != null && ChannelFactory != null && ChannelFactory.State == CommunicationState.Opened)
-                {
-                    // if connecting to same Node, skip the next steps
-                    if (ChannelFactory.State != CommunicationState.Faulted && ChannelFactory.Endpoint.Address.Uri.AbsoluteUri == NodeAddress.AbsoluteUri)
-                        return ChannelAPI;  // send the last API
-                    if (ChannelFactory.State == CommunicationState.Faulted)
-                        ChannelFactory.Abort();
-                    else
-                        ChannelFactory.Close();
-
-                    System.Threading.SpinWait wait = new System.Threading.SpinWait();
-                    while (ChannelFactory.State != CommunicationState.Closed)
-                    {
-                        wait.SpinOnce();
-                    }
-                }
-
-                ChannelFactory = new ChannelFactory<IRPCOperations>(
-                    new WebHttpBinding(WebHttpSecurityMode.None), new EndpointAddress(NodeAddress));
-                ChannelFactory.Endpoint.Behaviors.Add(new XmlRpcEndpointBehavior());
+                ChannelFactory<IRPCOperations> Factory = new ChannelFactory<IRPCOperations>(
+                    new WebHttpBinding(WebHttpSecurityMode.None), new EndpointAddress(NodeAddress));                
+                Factory.Endpoint.Behaviors.Add(new XmlRpcEndpointBehavior());
+                ChannelFactory.Add(Factory);
                 // check if channel was created succesfully
-                if ((ChannelFactory != null) || (ChannelFactory.State != CommunicationState.Faulted))
+                if ((Factory != null) || (Factory.State != CommunicationState.Faulted))
                 {
-                    ChannelAPI = ChannelFactory.CreateChannel();    // create new API
+                    IRPCOperations NewClient = Factory.CreateChannel();
+                    ChannelAPI.Add(new Tuple<string, IRPCOperations>(IP, NewClient));    // create new API
                     //ChannelFactory.Open();
-                    return ChannelAPI;
                 }
-                Console.WriteLine("Could not ConnectTo: " + IP + " Might crash.");
-                return null;
+                else
+                    Console.WriteLine("Could not ConnectTo: " + IP + " Might crash.");
             }
             catch (Exception ex)
             {
@@ -240,8 +228,20 @@ namespace DistributedSystems
                     Console.WriteLine("-------------------------------------------------");
                     Console.WriteLine(ex.StackTrace);
                 }
-                return null;
             }
+        }
+        /// <summary>
+        /// Connects to a Node using a specific IP.
+        /// The new API to the new Node can be found in the list APIs if connection succesful.
+        /// </summary>
+        /// <param name="IP">The IP to which you want to connect to</param>
+        /// <returns>True if connection could be made, False if not.</returns>
+        public IRPCOperations ConnectTo(string IP)
+        {
+            foreach (Tuple<string, IRPCOperations> Client in ChannelAPI)
+                if (Client.Item1 == IP)
+                    return Client.Item2;
+            return null;            
         }
         /// <summary>
         /// Select the desired Algorithm.

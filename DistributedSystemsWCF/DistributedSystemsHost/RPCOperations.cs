@@ -72,6 +72,7 @@ namespace DistributedSystems
             string Network = "";
             if (!Node.Instance.Network.Contains(ip))
             {
+                Node.Instance.CreateClient(ip);
                 Node.Instance.Network.Add(ip); // Add requesting node to this network
                 //Node.Instance.Network = new HashSet<string>(Node.Instance.Network).ToList();
                 Console.WriteLine(ip + " joined.");
