@@ -23,7 +23,7 @@ namespace DistributedSystems
         // --- Private Properties ----------------------------------------
         private ServiceHost RPCServiceHost = null;                    // The host class
         private Uri ListenUri = null;                                 // The URI where the server listens to incoming connetions
-        private ChannelFactory<IRPCOperations> ChannelFactory = null; // The API/Connection to another Node. Needed in order to open/close connections
+        public ChannelFactory<IRPCOperations> ChannelFactory = null; // The API/Connection to another Node. Needed in order to open/close connections
         private IRPCOperations ChannelAPI = null;                     // The API for the client
 
         // --- Public Properties -----------------------------------------
