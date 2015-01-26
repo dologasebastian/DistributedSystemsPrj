@@ -213,18 +213,14 @@ namespace DistributedSystems
             CreatePingers(10);
 
             Stopwatch watch = Stopwatch.StartNew();
-            
+            instances = pingers.Count;
             foreach (Ping p in pingers)
             {
-                lock (@lock)
-                {
-                    instances += 1;
-                }
                 string ip = string.Concat(BaseIP, cnt.ToString());
                 if (ip == IP)
                     ip = string.Concat(BaseIP, (cnt++).ToString());
 
-                p.SendAsync(ip, 200, data, po);
+                p.SendAsync(ip, 400, data, po);
                 cnt ++;
             }
 
@@ -232,7 +228,7 @@ namespace DistributedSystems
             {
                 wait.SpinOnce();
             }
-            DestroyPingers();
+            //DestroyPingers();
 
             if (IPs.Contains(IP))
                 IPs.Remove(IP);
@@ -259,11 +255,13 @@ namespace DistributedSystems
         }
         private static void Ping_completed(object s, PingCompletedEventArgs e)
         {
+            Ping p = s as Ping;
+            p.PingCompleted -= Ping_completed;
+            p.Dispose();
             lock (@lock)
             {
-                instances -= 1;
-            }
-
+                instances--;
+            }            
             if (e.Reply.Status == IPStatus.Success)
             {
                 //Console.WriteLine(string.Concat("Active IP: ", e.Reply.Address.ToString()));
