@@ -88,8 +88,13 @@ namespace DistributedSystems
                 if (ip != Node.Instance.Address)
                 {
                     IRPCOperations API = Node.Instance.ConnectTo(ip);
-                    Console.WriteLine("RPC: Send request to " + ip + " (Clock: " + SentTimeStamp + ")...");
-                    API.raRequest(Node.Instance.Address, SentTimeStamp);
+                    if (API != null)
+                    {
+                        Console.WriteLine("RPC: Send request to " + ip + " (Clock: " + SentTimeStamp + ")...");
+                        API.raRequest(Node.Instance.Address, SentTimeStamp);
+                    }
+                    else
+                        Console.WriteLine("API is null - RicardAgr. Skipping API.raRequest()");
                 }
             }
     
