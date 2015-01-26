@@ -60,6 +60,12 @@ namespace DistributedSystems
         /// <returns></returns>
         [OperationContract(Action = "pdc.ra_request")]
         int raRequest(string ip, int clock);
+        /// <summary>
+        /// Informs all the other nodes that it's done and to finish all calculations
+        /// </summary>
+        /// <returns></returns>
+        [OperationContract(Action = "pdc.done")]
+        int done();
         [OperationContract(Action = "pdc.test")]
         int test(int val);
     }
@@ -166,6 +172,7 @@ namespace DistributedSystems
 
             return 0;
         }
+        public int done() { Node.Instance.DistrCalc.HasFinished = true; return 0; }
         public int test(int val)
         {
             Console.WriteLine("Received: " + val);

@@ -12,6 +12,7 @@ namespace DistributedSystems
         // --- Protected Properties -------------------------------------------
         protected static readonly int DURATION = 3;
         protected bool HasStarted = false;
+        public bool HasFinished = false;
         protected static Random random = new Random();
         protected Object ThisLock = new Object();
         protected DateTime StartTime;

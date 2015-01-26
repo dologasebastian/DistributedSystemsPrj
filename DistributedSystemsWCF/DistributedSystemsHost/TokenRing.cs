@@ -65,7 +65,7 @@ namespace DistributedSystems
                     NeedsToAccessCriticalSection = true;
                     Pool.WaitOne();
                 }
-                if (!((DateTime.Now - StartTime).TotalSeconds > DURATION)) // predefined period of seconds
+                if (!HasFinished && !((DateTime.Now - StartTime).TotalSeconds > DURATION)) // predefined period of seconds
                 {
                     Console.WriteLine((DateTime.Now - StartTime).TotalSeconds);
 
@@ -85,7 +85,12 @@ namespace DistributedSystems
                 {
                     // we put sleep to make sure other nodes will have finished the calculation period
                     // and will not start anything new. When we do Release() they will all just print the resut.
-                    SleepCurrentThread(100);
+                    int index = Node.Instance.Network.IndexOf(Node.Instance.Address);
+                    string IP = Node.Instance.Network[(index + 1) % Node.Instance.Network.Count];
+
+                    IRPCOperations API = Node.Instance.ConnectTo(IP);
+                    if (API != null && !string.IsNullOrEmpty(IP))
+                        API.done();
                     Release();
                     Done();
                     break;
@@ -97,6 +102,7 @@ namespace DistributedSystems
             CurrentValue = 0;
             NeedsToAccessCriticalSection = false;
             this.HasToken = false;
+            HasFinished = false;
             Pool = new Semaphore(0, 1);
             StartTime = DateTime.Now;
             HasStarted = false;
