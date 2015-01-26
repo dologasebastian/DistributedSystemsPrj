@@ -85,7 +85,7 @@ namespace DistributedSystems
                 {
                     // we put sleep to make sure other nodes will have finished the calculation period
                     // and will not start anything new. When we do Release() they will all just print the resut.
-                    SleepCurrentThread(200);
+                    SleepCurrentThread(100);
                     Release();
                     Done();
                     break;
